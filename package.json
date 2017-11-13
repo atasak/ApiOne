@@ -1,0 +1,15 @@
+{
+  "name": "api-one",
+  "version": "0.0.1",
+  "description": "Attempt at full automation of backend-synchronization and database storage",
+  "main": "js/index.js",
+  "scripts": {
+    "test": "echo \"Not supported yet\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "ntb"
+  },
+  "author": "Niek Janssen",
+  "license": "ISC"
+}
