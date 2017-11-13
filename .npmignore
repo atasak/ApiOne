@@ -6,6 +6,7 @@
 
 #config files
 karma.conf.js
+package-lock.json
 tsconfig.json
 tslint.json
 

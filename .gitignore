@@ -11,5 +11,6 @@ npm-debug.log
 
 #generated js
 *.js
+!karma.js
 *.map.js
 *.d.ts
