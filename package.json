@@ -1,15 +1,20 @@
 {
-  "name": "api-one",
-  "version": "0.0.1",
-  "description": "Attempt at full automation of backand-synchronization and server backend storage. ",
-  "main": "js/index.js",
-  "scripts": {
-    "test": "echo \"Not supported yet\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "ntb"
-  },
-  "author": "Niek Janssen",
-  "license": "ISC"
+    "name": "api-one",
+    "version": "0.0.1",
+    "author": "Niek Janssen",
+    "license": "MIT",
+    "description": "Attempt at full automation of backand-synchronization and server backend storage. ",
+    "homepage": "https://github.com/atasak/MusicOne#readme",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/atasak/ApiOne"
+    },
+    "bugs": {
+        "url": "https://github.com/atasak/ApiOne/issues"
+    },
+    "main": "js/index.js",
+    "typings": "js/index.d.ts",
+    "scripts": {
+        "test": "echo \"Not supported yet\""
+    }
 }

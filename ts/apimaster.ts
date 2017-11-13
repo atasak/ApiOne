@@ -1,4 +1,3 @@
-import {objToArray} from '../util/object';
 import {ApiIds} from './apiid';
 import {ApiSchemeLib} from './lib/apischemelib';
 import {ApiBackend} from './nodes/apibackend';

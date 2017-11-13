@@ -1,0 +1,13 @@
+# dependencies
+/node_modules
+
+# IDEs and editors
+/.idea
+
+#config files
+karma.conf.js
+tsconfig.json
+tslint.json
+
+# src
+/ts
