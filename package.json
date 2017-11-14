@@ -12,13 +12,19 @@
   "bugs": {
     "url": "https://github.com/atasak/ApiOne/issues"
   },
-  "main": "js/index.js",
-  "typings": "js/index.d.ts",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "test": "echo \"Not supported yet\""
+    "build": "if exist dist\\ rd /s /q dist && tsc",
+    "test": "jasmine-ts \"test/**/*.spec.ts\""
+  },
+  "dependencies": {
+    "@types/node": "^8.0.51",
+    "ts-simple-ast": "^0.92.0"
   },
   "devDependencies": {
-    "@types/node": "^8.0.51"
+    "@types/jasmine": "^2.8.0",
+    "jasmine": "^2.8.0",
+    "jasmine-ts": "^0.2.1"
   }
 }

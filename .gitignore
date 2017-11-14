@@ -11,6 +11,6 @@ npm-debug.log
 
 #generated js
 *.js
-!karma.js
+!karma.conf.js
 *.map.js
 *.d.ts
