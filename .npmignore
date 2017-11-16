@@ -6,7 +6,6 @@
 
 #config files
 .gitignore
-karma.conf.js
 npm-debug.log
 package-lock.json
 tsconfig.json

@@ -1,5 +1,5 @@
 {
-    "typePath": "test/common",
+    "sourcePath": "test/common",
     "rootTypeName": "ApiRoot",
     "exportPaths": "test/common/lib"
 }
