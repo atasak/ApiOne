@@ -1,0 +1,10 @@
+{
+    "version": 3,
+    "file": "runner.js",
+    "sourceRoot": "",
+    "sources": [
+        "../../src/compiler/runner.ts"
+    ],
+    "names": [],
+    "mappings": ";;AAAA,yCAA0C;AAE1C,MAAM,QAAQ,GAAG,IAAI,yBAAc,EAAE,CAAC;AACtC,QAAQ,CAAC,kBAAkB,CAAC,mBAAmB,CAAC,CAAC;AACjD,QAAQ,CAAC,GAAG,EAAE,CAAC"
+}

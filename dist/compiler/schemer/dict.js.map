@@ -1,0 +1,10 @@
+{
+    "version": 3,
+    "file": "dict.js",
+    "sourceRoot": "",
+    "sources": [
+        "../../../src/compiler/schemer/dict.ts"
+    ],
+    "names": [],
+    "mappings": ";;AAAA;CACC;AADD,oBACC"
+}

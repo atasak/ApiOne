@@ -1,0 +1,10 @@
+{
+    "version": 3,
+    "file": "class.js",
+    "sourceRoot": "",
+    "sources": [
+        "../../../src/compiler/schemer/class.ts"
+    ],
+    "names": [],
+    "mappings": ";;AAGA;IAMI,YAAY,SAA2B;QACnC,MAAM,GAAG,GAAG,SAAS,CAAC,UAAU,EAAE,CAAC;QACnC,MAAM,CAAC;IACX,CAAC;CACJ;AAVD,sBAUC"
+}

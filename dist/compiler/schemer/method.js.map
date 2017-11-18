@@ -1,0 +1,10 @@
+{
+    "version": 3,
+    "file": "method.js",
+    "sourceRoot": "",
+    "sources": [
+        "../../../src/compiler/schemer/method.ts"
+    ],
+    "names": [],
+    "mappings": ";;AAAA;CAEC;AAFD,wBAEC"
+}

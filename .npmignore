@@ -13,4 +13,4 @@ tslint.json
 
 # src and test
 /src
-/test
+/spec

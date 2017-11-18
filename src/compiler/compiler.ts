@@ -13,6 +13,7 @@ export class ApiOneCompiler {
     loadConfigFromFile(file: string) {
         const contents = readFileSync(file, 'utf8');
         const json = JSON.parse(contents);
+        this.loadConfig(json);
     }
 
     loadConfig(config: any) {
@@ -22,6 +23,8 @@ export class ApiOneCompiler {
     }
 
     run() {
+        console.log('Compiling as ApiOne with config: ');
+        console.log(this.config);
         const schemer = new Schemer(this.config).run();
     }
 }

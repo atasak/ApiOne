@@ -16,7 +16,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "if exist dist\\ rd /s /q dist && tsc",
-    "test": "jasmine-ts \"test/**/*.spec.ts\""
+      "test": "jasmine-ts"
   },
   "dependencies": {
     "@types/node": "^8.0.51",

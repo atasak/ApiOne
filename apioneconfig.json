@@ -1,5 +1,5 @@
 {
-    "sourcePath": "test/common",
+    "sourcePath": "spec/common",
     "rootTypeName": "ApiRoot",
-    "exportPaths": "test/common/lib"
+    "exportPaths": "spec/common/lib"
 }

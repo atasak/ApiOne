@@ -1,0 +1,10 @@
+{
+    "version": 3,
+    "file": "list.js",
+    "sourceRoot": "",
+    "sources": [
+        "../../../src/compiler/schemer/list.ts"
+    ],
+    "names": [],
+    "mappings": ";;AAAA;CAAoB;AAApB,oBAAoB"
+}

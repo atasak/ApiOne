@@ -1,3 +1,5 @@
+import {ClassDeclaration} from 'ts-simple-ast';
+import {Method} from './method';
 import {Property} from './schemer';
 
 export class Class {
@@ -5,4 +7,9 @@ export class Class {
     name: string;
     fullName: string;
     properties: { [key: string]: Property };
+    construct: Method;
+
+    constructor(classNode: ClassDeclaration) {
+
+    }
 }
