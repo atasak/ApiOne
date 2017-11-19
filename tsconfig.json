@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es2017",
+        "target": "es2015",
         "module": "commonjs",
         "declaration": true,
         "typeRoots": [
@@ -9,7 +9,7 @@
         "lib": [
             "es2015.promise",
             "es2015.proxy",
-            "es2017"
+            "es2015"
         ],
         "outDir": "dist",
         "sourceMap": true

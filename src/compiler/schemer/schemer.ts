@@ -1,15 +1,10 @@
 import Ast, {SourceFile} from 'ts-simple-ast';
+import {PromiseMap} from '../../util/promisemap';
 import {ApiOneConfig} from '../compiler';
 import {Class} from './class';
-import {Dict} from './dict';
-import {List} from './list';
-import {Method} from './method';
-import {Var} from './var';
-
-export type Property = Class | Method | Dict | List | Var;
 
 export class Schemer {
-    structures: Class[] = [];
+    structures: PromiseMap<Class> = new PromiseMap<Class>();
 
     constructor(private config: ApiOneConfig) {
     }
@@ -24,8 +19,15 @@ export class Schemer {
     }
 
     extractStructures(source: SourceFile) {
-        for (const cls of source.getClasses()) {
-            this.structures.push(new Class(cls));
+        for (const classNode of source.getClasses()) {
+            const clazz = new Class(this, classNode);
+            this.structures.insert(clazz.name, clazz);
         }
+        this.structures.finalize();
+        console.log(this.structures);
+    }
+
+    getTypeByFullName(name: string): Promise<Class> {
+        return this.structures.get(name);
     }
 }

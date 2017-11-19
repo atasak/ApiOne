@@ -10,6 +10,4 @@
 npm-debug.log
 
 #generated js
-*.js
-*.map.js
-*.d.ts
+/dist/
