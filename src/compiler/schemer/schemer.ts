@@ -6,7 +6,7 @@ import {Class} from './class';
 export class Schemer {
     structures: PromiseMap<Class> = new PromiseMap<Class>();
 
-    constructor(private config: ApiOneConfig) {
+    constructor(public config: ApiOneConfig) {
     }
 
     run(): Schemer {
@@ -21,7 +21,8 @@ export class Schemer {
     extractStructures(source: SourceFile) {
         for (const classNode of source.getClasses()) {
             const clazz = new Class(this, classNode);
-            this.structures.insert(clazz.name, clazz);
+            this.structures.insert(clazz.fullName, clazz);
+            console.log(clazz.fullName);
         }
         this.structures.finalize();
         console.log(this.structures);

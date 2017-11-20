@@ -1,7 +1,7 @@
 import {ClassDeclaration} from 'ts-simple-ast';
 import {Method} from './method';
 import {Schemer} from './schemer';
-import {Type} from './type';
+import {getRelativeFullName, Type} from './type';
 
 export class Class {
     id: number;
@@ -16,6 +16,11 @@ export class Class {
         this.extractProperties(classNode);
     }
 
+    private extractGenericInfo(classNode: ClassDeclaration) {
+        this.name = classNode.getSymbol().getName();
+        this.fullName = getRelativeFullName(this.schemer, classNode.getSymbol());
+    }
+
     extractMethods(classNode: ClassDeclaration) {
         const instanceMethods = classNode.getInstanceMethods();
         for (const instanceMethod of instanceMethods) {
@@ -26,10 +31,5 @@ export class Class {
 
     extractProperties(classNode: ClassDeclaration) {
 
-    }
-
-    private extractGenericInfo(classNode: ClassDeclaration) {
-        this.name = classNode.getSymbol().getName();
-        this.fullName = classNode.getSymbol().getFullyQualifiedName();
     }
 }
