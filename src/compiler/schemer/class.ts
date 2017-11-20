@@ -1,14 +1,14 @@
-import {ClassDeclaration} from 'ts-simple-ast';
+import {ClassDeclaration, PropertyDeclaration} from 'ts-simple-ast';
 import {Method} from './method';
 import {Schemer} from './schemer';
-import {Type} from './type';
+import {Property} from './property';
 
 export class Class {
     id: number;
     name: string;
     fullName: string;
-    properties: { [key: string]: Type } = {};
-    construct: Method;
+    properties: { [key: string]: Property } = {};
+    constructr: Method;
 
     constructor(private schemer: Schemer, classNode: ClassDeclaration) {
         this.extractGenericInfo(classNode);
@@ -25,7 +25,11 @@ export class Class {
     }
 
     extractProperties(classNode: ClassDeclaration) {
-
+        const instanceProperties = classNode.getInstanceProperties();
+        for (const instanceProperty of instanceProperties as PropertyDeclaration[]) {
+            const property = Property.MakeProperty(this.schemer, instanceProperty);
+            this.properties[property.name] = property;
+        }
     }
 
     private extractGenericInfo(classNode: ClassDeclaration) {
