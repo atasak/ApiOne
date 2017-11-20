@@ -9,23 +9,31 @@ export class Schemer {
     constructor(public config: ApiOneConfig) {
     }
 
-    run(): Schemer {
-        const ast = new Ast();
-        ast.addSourceFiles(`${this.config.sourcePath}/**/*.ts`);
-        const sources = ast.getSourceFiles();
-        for (const source of sources)
-            this.extractStructures(source);
+    async run(): Promise<Schemer> {
+        const sources = this.getSources();
+        await this.extractSources(sources)
+        await this.structures.finalize()
+        console.log(this.structures)
         return this;
     }
 
-    extractStructures(source: SourceFile) {
+    getSources(): SourceFile[] {
+        const ast = new Ast();
+        ast.addSourceFiles(`${this.config.sourcePath}/**/*.ts`);
+        return ast.getSourceFiles();
+    }
+
+    async extractSources(sources: SourceFile[]) {
+        for (const source of sources)
+            await this.extractStructures(source);
+    }
+
+    async extractStructures(source: SourceFile) {
         for (const classNode of source.getClasses()) {
             const clazz = new Class(this, classNode);
-            this.structures.insert(clazz.fullName, clazz);
-            console.log(clazz.fullName);
+            this.structures.insert(clazz.name, clazz);
+            console.log(clazz);
         }
-        this.structures.finalize();
-        console.log(this.structures);
     }
 
     getTypeByFullName(name: string): Promise<Class> {

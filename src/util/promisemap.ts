@@ -11,7 +11,7 @@ export class PromiseMap<T> {
 
     finalize() {
         for (const key in this.map) {
-            if (this.map[key].value !== null)
+            if (this.map[key].value === null)
                 this.map[key].reject();
         }
     }
@@ -33,6 +33,7 @@ class PromiseWrapper<T> {
         this.promise = new Promise<T>((resolve, reject) => {
             this.resolve = resolve;
             this.reject = reject;
-        }).then((value) => this.value = value);
+        }).then((value) =>
+            this.value = value);
     }
 }
