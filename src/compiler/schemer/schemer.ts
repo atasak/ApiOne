@@ -31,8 +31,7 @@ export class Schemer {
     async extractStructures(source: SourceFile) {
         for (const classNode of source.getClasses()) {
             const clazz = new Class(this, classNode);
-            this.structures.insert(clazz.name, clazz);
-            console.log(clazz);
+            this.structures.insert(clazz.fullName, clazz);
         }
     }
 
