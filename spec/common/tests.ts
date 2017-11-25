@@ -9,6 +9,7 @@ export class A {
 
 class B extends A {
     str: string = 'Nope';
+    x: { [key: string]: A } = {};
     y: string[];
     a: A;
 }

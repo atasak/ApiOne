@@ -1,6 +1,6 @@
-import {Type} from './type';
-import {Schemer} from './schemer';
 import {MethodDeclaration, PropertyDeclaration} from 'ts-simple-ast';
+import {Schemer} from './schemer';
+import {getTypeInfo, Type} from './type';
 
 export class Property {
     name: string;
@@ -8,7 +8,7 @@ export class Property {
     type: Type;
 
     constructor(protected schemer: Schemer, propertyNode: PropertyDeclaration) {
-        this.extractGenericInfo(propertyNode)
+        this.extractGenericInfo(propertyNode);
         this.extractTypeInfo(propertyNode);
         this.extractDefaultValue(propertyNode);
     }
@@ -17,8 +17,8 @@ export class Property {
         this.name = propertyNode.getSymbol().getName();
     }
 
-    private extractTypeInfo(propertyNode: PropertyDeclaration) {
-
+    private async extractTypeInfo(propertyNode: PropertyDeclaration) {
+        this.type = await getTypeInfo(this.schemer, propertyNode.getType());
     }
 
     private extractDefaultValue(propertyNode: MethodDeclaration | PropertyDeclaration) {

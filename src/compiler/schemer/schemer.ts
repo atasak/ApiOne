@@ -11,9 +11,9 @@ export class Schemer {
 
     async run(): Promise<Schemer> {
         const sources = this.getSources();
-        await this.extractSources(sources)
-        await this.structures.finalize()
-        console.log(this.structures)
+        await this.extractSources(sources);
+        await this.structures.finalize();
+        console.log(this.structures);
         return this;
     }
 

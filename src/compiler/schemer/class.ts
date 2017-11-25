@@ -30,11 +30,11 @@ export class Class {
         }
     }
 
-    extractProperties(classNode: ClassDeclaration) {
+    async extractProperties(classNode: ClassDeclaration) {
         const instanceProperties = classNode.getInstanceProperties();
         for (const instanceProperty of instanceProperties as PropertyDeclaration[]) {
-            //const property = Property.MakeProperty(this.schemer, instanceProperty);
-            //this.properties[property.name] = property;
+            const property = new Property(this.schemer, instanceProperty);
+            this.properties[property.name] = property;
         }
     }
 }
