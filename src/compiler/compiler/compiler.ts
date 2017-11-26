@@ -1,11 +1,13 @@
 import {readFileSync} from 'fs';
-import {Schemer} from './schemer/schemer';
+import {Schemer} from './schemer';
 
 export class ApiOneCompiler {
     defaultConfig: ApiOneConfig = {
         sourcePath: 'common',
         rootTypeName: 'ApiRoot',
         exportPaths: ['common/lib'],
+        index: 'apione',
+        indexAsPath: false,
     };
 
     config: ApiOneConfig;
@@ -33,4 +35,6 @@ export class ApiOneConfig {
     sourcePath: string;
     rootTypeName: string;
     exportPaths: string[];
+    index: string;
+    indexAsPath: boolean;
 }

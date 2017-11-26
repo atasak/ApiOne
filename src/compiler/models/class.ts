@@ -1,7 +1,7 @@
 import {ClassDeclaration, PropertyDeclaration} from 'ts-simple-ast';
 import {Method} from './method';
 import {Property} from './property';
-import {Schemer} from './schemer';
+import {Schemer} from '../compiler/schemer';
 import {getRelativeFullName} from './type';
 
 export class Class {
@@ -17,12 +17,11 @@ export class Class {
         this.extractProperties(classNode);
     }
 
-    private extractGenericInfo(classNode: ClassDeclaration) {
-        this.name = classNode.getSymbol().getName();
-        this.fullName = getRelativeFullName(this.schemer, classNode.getSymbol());
+    get file(): string {
+        return this.fullName.split('#')[0]
     }
 
-    extractMethods(classNode: ClassDeclaration) {
+    private extractMethods(classNode: ClassDeclaration) {
         const instanceMethods = classNode.getInstanceMethods();
         for (const instanceMethod of instanceMethods) {
             const method = new Method(this.schemer, instanceMethod);
@@ -30,11 +29,16 @@ export class Class {
         }
     }
 
-    async extractProperties(classNode: ClassDeclaration) {
+    private async extractProperties(classNode: ClassDeclaration) {
         const instanceProperties = classNode.getInstanceProperties();
         for (const instanceProperty of instanceProperties as PropertyDeclaration[]) {
             const property = new Property(this.schemer, instanceProperty);
             this.properties[property.name] = property;
         }
+    }
+
+    private extractGenericInfo(classNode: ClassDeclaration) {
+        this.name = classNode.getSymbol().getName();
+        this.fullName = getRelativeFullName(this.schemer, classNode.getSymbol());
     }
 }

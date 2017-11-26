@@ -1,7 +1,7 @@
 import Ast, {SourceFile} from 'ts-simple-ast';
 import {PromiseMap} from '../../util/promisemap';
-import {ApiOneConfig} from '../compiler';
-import {Class} from './class';
+import {ApiOneConfig} from './compiler';
+import {Class} from '../models/class';
 
 export class Schemer {
     structures: PromiseMap<Class> = new PromiseMap<Class>();

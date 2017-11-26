@@ -1,4 +1,4 @@
-import {ApiOneCompiler} from './compiler';
+import {ApiOneCompiler} from './compiler/compiler';
 
 const compiler = new ApiOneCompiler();
 compiler.loadConfigFromFile('apioneconfig.json');

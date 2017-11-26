@@ -1,5 +1,5 @@
 import {MethodDeclaration, PropertyDeclaration} from 'ts-simple-ast';
-import {Schemer} from './schemer';
+import {Schemer} from '../compiler/schemer';
 import {getTypeInfo, Type} from './type';
 
 export class Property {

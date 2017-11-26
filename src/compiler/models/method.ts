@@ -1,5 +1,5 @@
 import {MethodDeclaration, ParameterDeclaration} from 'ts-simple-ast';
-import {Schemer} from './schemer';
+import {Schemer} from '../compiler/schemer';
 import {getTypeInfo, Type} from './type';
 
 export class Method {
@@ -32,7 +32,7 @@ export class Parameter {
         this.getType(parameterNode);
     }
 
-    async getType(parameterNode: ParameterDeclaration) {
+    private async getType(parameterNode: ParameterDeclaration) {
         this.type = await getTypeInfo(this.schemer, parameterNode.getType());
     }
 }
