@@ -7,7 +7,7 @@ export class Method {
     parameters: Parameter[] = [];
     returnType: Type;
 
-    constructor(private schemer: Schemer, methodNode: MethodDeclaration) {
+    constructor(private schemer: Schemer, private methodNode: MethodDeclaration) {
         this.extractGenericInfo(methodNode);
         this.extractArguments(methodNode);
     }

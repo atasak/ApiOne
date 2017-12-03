@@ -11,7 +11,7 @@ export class Class {
     properties: { [key: string]: Property | Method } = {};
     constructr: Method;
 
-    constructor(private schemer: Schemer, classNode: ClassDeclaration) {
+    constructor(private schemer: Schemer, private classNode: ClassDeclaration) {
         this.extractGenericInfo(classNode);
         this.extractMethods(classNode);
         this.extractProperties(classNode);

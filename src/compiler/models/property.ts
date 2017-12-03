@@ -1,13 +1,13 @@
-import {MethodDeclaration, PropertyDeclaration} from 'ts-simple-ast';
+import {PropertyDeclaration} from 'ts-simple-ast';
 import {Schemer} from '../compiler/schemer';
 import {getTypeInfo, Type} from './type';
 
 export class Property {
     name: string;
-    defaultValue: any = null;
+    defaultValue = '';
     type: Type;
 
-    constructor(protected schemer: Schemer, propertyNode: PropertyDeclaration) {
+    constructor(protected schemer: Schemer, private propertyNode: PropertyDeclaration) {
         this.extractGenericInfo(propertyNode);
         this.extractTypeInfo(propertyNode);
         this.extractDefaultValue(propertyNode);
@@ -21,7 +21,7 @@ export class Property {
         this.type = await getTypeInfo(this.schemer, propertyNode.getType());
     }
 
-    private extractDefaultValue(propertyNode: MethodDeclaration | PropertyDeclaration) {
-
+    private extractDefaultValue(propertyNode: PropertyDeclaration) {
+        this.defaultValue = propertyNode.getInitializer().getText();
     }
 }
