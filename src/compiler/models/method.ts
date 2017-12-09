@@ -1,6 +1,6 @@
 import {MethodDeclaration, ParameterDeclaration} from 'ts-simple-ast';
 import {Schemer} from '../compiler/schemer';
-import {getTypeInfo, Type} from './type';
+import {getRelativeFullName, getTypeInfo, Type} from './type';
 
 export class Method {
     name: string;
@@ -13,15 +13,14 @@ export class Method {
     }
 
     private extractGenericInfo(methodNode: MethodDeclaration) {
-        this.name = methodNode.getSymbol().getName();
+        this.name = getRelativeFullName(this.schemer, methodNode.getSymbol());
     }
 
-    private extractArguments(methodNode: MethodDeclaration) {
+    private async extractArguments(methodNode: MethodDeclaration) {
         const parameterNodes = methodNode.getParameters();
         for (const parameterNode of parameterNodes)
             this.parameters.push(new Parameter(this.schemer, parameterNode));
-        //this.returnType = methodNode.getReturnType().getSymbol().getFullyQualifiedName();
-        //console.log(this.returnType);
+        this.returnType = await getTypeInfo(this.schemer, methodNode.getReturnType())
     }
 }
 

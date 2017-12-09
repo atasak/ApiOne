@@ -7,6 +7,18 @@ export class Property {
     defaultValue = '';
     type: Type;
 
+    get oneName(): string {
+        return `_one_${this.name}`;
+    }
+
+    get $name(): string {
+        return `$${this.name}`;
+    }
+
+    get _name(): string {
+        return `_${this.name}`;
+    }
+
     constructor(protected schemer: Schemer, private propertyNode: PropertyDeclaration) {
         this.extractGenericInfo(propertyNode);
         this.extractTypeInfo(propertyNode);
