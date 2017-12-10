@@ -18,7 +18,7 @@ export class Class {
     }
 
     get file(): string {
-        return this.fullName.split('#')[0]
+        return this.fullName.split('#')[0];
     }
 
     private extractMethods(classNode: ClassDeclaration) {
@@ -29,7 +29,7 @@ export class Class {
         }
     }
 
-    private async extractProperties(classNode: ClassDeclaration) {
+    private extractProperties(classNode: ClassDeclaration) {
         const instanceProperties = classNode.getInstanceProperties();
         for (const instanceProperty of instanceProperties as PropertyDeclaration[]) {
             const property = new Property(this.schemer, instanceProperty);

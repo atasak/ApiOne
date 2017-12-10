@@ -12,7 +12,7 @@ export class Dict {
         this.extractTypeInfo(typeNode);
     }
 
-    private async extractTypeInfo(typeNode: AstType) {
+    private extractTypeInfo(typeNode: AstType) {
         if (typeNode.getStringIndexType() !== undefined)
             this.indexType = 'String';
         if (typeNode.getNumberIndexType() !== undefined)
@@ -20,6 +20,7 @@ export class Dict {
 
         const mapTypeNode = typeNode.getNumberIndexType() || typeNode.getStringIndexType();
 
-        this.type = await getTypeInfo(this.schemer, mapTypeNode);
+        getTypeInfo(this.schemer, mapTypeNode)
+            .then(value => this.type = value);
     }
 }

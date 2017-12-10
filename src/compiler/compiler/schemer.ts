@@ -9,12 +9,11 @@ export class Schemer {
     constructor(public config: ApiOneConfig) {
     }
 
-    async run(): Promise<Schemer> {
+    run(): PromiseMap<Class> {
         const sources = this.getSources();
-        await this.extractSources(sources);
-        await this.structures.finalize();
-        console.log(this.structures);
-        return this;
+        this.extractSources(sources);
+        this.structures.finalize();
+        return this.structures;
     }
 
     getSources(): SourceFile[] {
@@ -23,12 +22,12 @@ export class Schemer {
         return ast.getSourceFiles();
     }
 
-    async extractSources(sources: SourceFile[]) {
+    extractSources(sources: SourceFile[]) {
         for (const source of sources)
-            await this.extractStructures(source);
+            this.extractStructures(source);
     }
 
-    async extractStructures(source: SourceFile) {
+    extractStructures(source: SourceFile) {
         for (const classNode of source.getClasses()) {
             const clazz = new Class(this, classNode);
             this.structures.insert(clazz.fullName, clazz);

@@ -1,3 +1,5 @@
+import {SyncPromise} from './syncpromise';
+
 export class PromiseMap<T> {
     private map: { [type: string]: PromiseWrapper<T> } = {};
 
@@ -12,7 +14,16 @@ export class PromiseMap<T> {
     finalize() {
         for (const key in this.map) {
             if (this.map[key].value === null)
-                this.map[key].reject();
+                this.map[key].reject('Key not set');
+        }
+    }
+
+    log() {
+        for (const key in this.map) {
+            if (this.map.hasOwnProperty(key)) {
+                console.log(`${key}: `);
+                console.log(this.map[key].value);
+            }
         }
     }
 
@@ -26,14 +37,15 @@ export class PromiseMap<T> {
 class PromiseWrapper<T> {
     promise: Promise<T>;
     resolve: (value: T) => void;
-    reject: () => void;
+    reject: (reason: any) => void;
     value: T = null;
 
     constructor() {
-        this.promise = new Promise<T>((resolve, reject) => {
+        this.promise = new SyncPromise<T>((resolve, reject) => {
             this.resolve = resolve;
             this.reject = reject;
-        }).then((value) =>
+        });
+        this.promise.then((value) =>
             this.value = value);
     }
 }

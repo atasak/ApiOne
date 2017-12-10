@@ -27,7 +27,9 @@ export class ApiOneCompiler {
     run() {
         console.log('Compiling as ApiOne with config: ');
         console.log(this.config);
-        const schemer = new Schemer(this.config).run();
+        const schemer = new Schemer(this.config);
+        const classMap = schemer.run();
+        classMap.log();
     }
 }
 

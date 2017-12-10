@@ -7,6 +7,12 @@ export class Property {
     defaultValue = '';
     type: Type;
 
+    constructor(protected schemer: Schemer, private propertyNode: PropertyDeclaration) {
+        this.extractGenericInfo(propertyNode);
+        this.extractTypeInfo(propertyNode);
+        this.extractDefaultValue(propertyNode);
+    }
+
     get oneName(): string {
         return `_one_${this.name}`;
     }
@@ -19,21 +25,16 @@ export class Property {
         return `_${this.name}`;
     }
 
-    constructor(protected schemer: Schemer, private propertyNode: PropertyDeclaration) {
-        this.extractGenericInfo(propertyNode);
-        this.extractTypeInfo(propertyNode);
-        this.extractDefaultValue(propertyNode);
-    }
-
     private extractGenericInfo(propertyNode: PropertyDeclaration) {
         this.name = propertyNode.getSymbol().getName();
     }
 
-    private async extractTypeInfo(propertyNode: PropertyDeclaration) {
-        this.type = await getTypeInfo(this.schemer, propertyNode.getType());
+    private extractTypeInfo(propertyNode: PropertyDeclaration) {
+        getTypeInfo(this.schemer, propertyNode.getType())
+            .then(value => this.type = value);
     }
 
     private extractDefaultValue(propertyNode: PropertyDeclaration) {
-        this.defaultValue = propertyNode.getInitializer().getText();
+        // this.defaultValue = propertyNode.getInitializer().getText();
     }
 }

@@ -9,7 +9,8 @@ export class List {
         this.extractTypeInfo(typeNode.getArrayType());
     }
 
-    private async extractTypeInfo(propertyNode: AstType) {
-        this.type = await getTypeInfo(this.schemer, propertyNode);
+    private extractTypeInfo(propertyNode: AstType) {
+        getTypeInfo(this.schemer, propertyNode)
+            .then(value => this.type = value);
     }
 }

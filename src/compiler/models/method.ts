@@ -16,11 +16,12 @@ export class Method {
         this.name = getRelativeFullName(this.schemer, methodNode.getSymbol());
     }
 
-    private async extractArguments(methodNode: MethodDeclaration) {
+    private extractArguments(methodNode: MethodDeclaration) {
         const parameterNodes = methodNode.getParameters();
         for (const parameterNode of parameterNodes)
             this.parameters.push(new Parameter(this.schemer, parameterNode));
-        this.returnType = await getTypeInfo(this.schemer, methodNode.getReturnType())
+        getTypeInfo(this.schemer, methodNode.getReturnType())
+            .then(value => this.returnType = value);
     }
 }
 
@@ -31,7 +32,8 @@ export class Parameter {
         this.getType(parameterNode);
     }
 
-    private async getType(parameterNode: ParameterDeclaration) {
-        this.type = await getTypeInfo(this.schemer, parameterNode.getType());
+    private getType(parameterNode: ParameterDeclaration) {
+        getTypeInfo(this.schemer, parameterNode.getType())
+            .then(value => this.type = value);
     }
 }
