@@ -1,4 +1,4 @@
-import {PropertyDeclaration} from 'ts-simple-ast';
+import {ClassDeclaration, PropertyDeclaration} from 'ts-simple-ast';
 import {Schemer} from '../compiler/schemer';
 import {Type} from './type';
 import {getTypeInfo} from './typeutils';
@@ -9,9 +9,9 @@ export class Property {
     type: Type;
 
     constructor(protected schemer: Schemer, private propertyNode: PropertyDeclaration) {
-        this.extractGenericInfo(propertyNode);
-        this.extractTypeInfo(propertyNode);
-        this.extractDefaultValue(propertyNode);
+        this.extractGenericInfo();
+        this.extractTypeInfo();
+        this.extractDefaultValue();
     }
 
     get oneName(): string {
@@ -30,18 +30,21 @@ export class Property {
         return `${this.name}: ${this.type.typeAsString()} = ${this.defaultValue}`;
     }
 
-    private extractGenericInfo(propertyNode: PropertyDeclaration) {
-        this.name = propertyNode.getSymbol().getName();
+    private extractGenericInfo() {
+        this.name = this.propertyNode.getSymbol().getName();
     }
 
-    private extractTypeInfo(propertyNode: PropertyDeclaration) {
-        getTypeInfo(this.schemer, propertyNode.getType())
+    private extractTypeInfo() {
+        getTypeInfo(this.schemer, this.propertyNode.getType())
             .then(value => this.type = value);
     }
 
-    private extractDefaultValue(propertyNode: PropertyDeclaration) {
-        const initializer = propertyNode.getInitializer();
+    private extractDefaultValue() {
+        const initializer = this.propertyNode.getInitializer();
         if (initializer)
             this.defaultValue = initializer.getText();
+    }
+
+    transformIntoClass(classNode: ClassDeclaration) {
     }
 }

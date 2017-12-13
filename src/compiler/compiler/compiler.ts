@@ -5,12 +5,14 @@ export class ApiOneCompiler {
     defaultConfig: ApiOneConfig = {
         sourcePath: 'common',
         rootTypeName: 'ApiRoot',
-        exportPaths: ['common/lib'],
+        exportPath: 'common/lib',
         index: 'apione',
         indexAsPath: false,
     };
 
     config: ApiOneConfig;
+
+    schemer: Schemer;
 
     loadConfigFromFile(file: string) {
         const contents = readFileSync(file, 'utf8');
@@ -27,16 +29,20 @@ export class ApiOneCompiler {
     run() {
         console.log('Compiling as ApiOne with config: ');
         console.log(this.config);
-        const schemer = new Schemer(this.config);
-        const classMap = schemer.run();
+        this.schemer = new Schemer(this.config);
+        const classMap = this.schemer.run();
         classMap.log();
+    }
+
+    write() {
+        this.schemer.write();
     }
 }
 
 export class ApiOneConfig {
     sourcePath: string;
     rootTypeName: string;
-    exportPaths: string[];
+    exportPath: string;
     index: string;
     indexAsPath: boolean;
 }
