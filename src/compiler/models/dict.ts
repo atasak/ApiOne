@@ -1,15 +1,21 @@
 import {Type as AstType} from 'ts-simple-ast';
 import {Schemer} from '../compiler/schemer';
-import {getTypeInfo, Type} from './type';
+import {Type} from './type';
+import {getTypeInfo} from './typeutils';
 
 export type IndexType = 'String' | 'Number';
 
-export class Dict {
+export class Dict extends Type {
     indexType: IndexType;
     type: Type;
 
     constructor(private schemer: Schemer, private typeNode: AstType) {
+        super();
         this.extractTypeInfo(typeNode);
+    }
+
+    typeAsString(): string {
+        return `< [key: ${this.indexType}]: ${this.type.typeAsString()}`;
     }
 
     private extractTypeInfo(typeNode: AstType) {

@@ -1,4 +1,6 @@
 import {SyncPromise} from './syncpromise';
+import {Type} from '../compiler/models/type';
+import {Printable} from './printable';
 
 export class PromiseMap<T> {
     private map: { [type: string]: PromiseWrapper<T> } = {};
@@ -23,10 +25,10 @@ export class PromiseMap<T> {
             if (this.map.hasOwnProperty(key)) {
                 console.log(`${key}: `);
                 const value = this.map[key].value;
-                //if (value['asString'] != null)
-                //console.log(value.asString);
-                //else
-                console.log(value);
+                if (value['asString'] != null)
+                    console.log((value as any as Printable).asString());
+                else
+                    console.log(value);
             }
         }
     }

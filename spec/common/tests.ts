@@ -12,4 +12,9 @@ class B extends A {
     x: { [key: string]: A } = {};
     y: string[];
     a: A;
+
+    constructor(str: string) {
+        super();
+        this.y = [];
+    }
 }

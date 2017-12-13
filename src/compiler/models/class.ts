@@ -2,9 +2,12 @@ import {ClassDeclaration, PropertyDeclaration} from 'ts-simple-ast';
 import {Method} from './method';
 import {Property} from './property';
 import {Schemer} from '../compiler/schemer';
-import {getRelativeFullName} from './type';
+import {Type} from './type';
+import {getRelativeFullName} from './typeutils';
+import {enumerate, Printable} from '../../util/printable';
+import {Constructor} from './constructor';
 
-export class Class {
+export class Class extends Type implements Printable {
     id: number;
     name: string;
     fullName: string;
@@ -12,7 +15,9 @@ export class Class {
     constructr: Method;
 
     constructor(private schemer: Schemer, private classNode: ClassDeclaration) {
+        super();
         this.extractGenericInfo(classNode);
+        this.extractConstructor(classNode);
         this.extractMethods(classNode);
         this.extractProperties(classNode);
     }
@@ -21,11 +26,14 @@ export class Class {
         return this.fullName.split('#')[0];
     }
 
-    get asString(): string {
-        return `{
-            id: ${this.id},
-            fullName: ${this.fullName},
-        }`;
+    asString(): string {
+        const constructor = `    constructor: ${this.constructr ? this.constructr.asString() : 'None'}, \n`;
+        const properties = enumerate(this.properties, p => `    ${p.asString()}, \n`);
+        return constructor + properties;
+    }
+
+    typeAsString(): string {
+        return this.fullName;
     }
 
     private extractMethods(classNode: ClassDeclaration) {
@@ -47,5 +55,12 @@ export class Class {
     private extractGenericInfo(classNode: ClassDeclaration) {
         this.name = classNode.getSymbol().getName();
         this.fullName = getRelativeFullName(this.schemer, classNode.getSymbol());
+    }
+
+    private extractConstructor(classNode: ClassDeclaration) {
+        const ctors = classNode.getConstructors();
+        if (ctors.length !== 1)
+            return;
+        this.constructr = new Constructor(this.schemer, ctors[0]);
     }
 }

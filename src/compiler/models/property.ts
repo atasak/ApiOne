@@ -1,6 +1,7 @@
 import {PropertyDeclaration} from 'ts-simple-ast';
 import {Schemer} from '../compiler/schemer';
-import {getTypeInfo, Type} from './type';
+import {Type} from './type';
+import {getTypeInfo} from './typeutils';
 
 export class Property {
     name: string;
@@ -23,6 +24,10 @@ export class Property {
 
     get _name(): string {
         return `_${this.name}`;
+    }
+
+    asString(): string {
+        return `${this.name}: ${this.type.typeAsString()} = ${this.defaultValue}`;
     }
 
     private extractGenericInfo(propertyNode: PropertyDeclaration) {

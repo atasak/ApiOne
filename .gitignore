@@ -11,3 +11,5 @@ npm-debug.log
 
 #generated js
 /dist/
+/src/**/*.js
+/spec/**/*.js
