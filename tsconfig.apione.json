@@ -7,21 +7,19 @@
       "node_modules/@types"
     ],
     "lib": [
-      "es2015.promise",
-      "es2015.proxy",
       "es2015"
     ],
-    "outDir": "dist",
+    "outDir": "spec/common/lib",
     "sourceMap": true
   },
   "include": [
-    "src"
+    "spec/common"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "spec",
     "**/*.bak/*",
-    "src/compiler/templates"
+    "src"
   ]
 }

@@ -1,7 +1,7 @@
 {
   "sourcePath": "spec/common",
   "rootTypeName": "ApiRoot",
-  "exportPaths": "spec/common/lib",
+  "exportPath": "spec/common/lib",
   "index": "src/index.ts",
   "indexAsPath": true
 }

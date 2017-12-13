@@ -5,6 +5,7 @@ import {Class} from '../models/class';
 
 export class Schemer {
     structures: PromiseMap<Class> = new PromiseMap<Class>();
+    ast: Ast;
 
     constructor(public config: ApiOneConfig) {
     }
@@ -17,9 +18,12 @@ export class Schemer {
     }
 
     getSources(): SourceFile[] {
-        const ast = new Ast();
-        ast.addSourceFiles(`${this.config.sourcePath}/**/*.ts`);
-        return ast.getSourceFiles();
+        const config = {
+            tsConfigFilePath: 'tsconfig.apione.json',
+        };
+        this.ast = new Ast(config);
+        this.ast.addSourceFiles(`${this.config.sourcePath}/**/*.ts`);
+        return this.ast.getSourceFiles();
     }
 
     extractSources(sources: SourceFile[]) {
@@ -36,5 +40,10 @@ export class Schemer {
 
     getTypeByFullName(name: string): Promise<Class> {
         return this.structures.get(name);
+    }
+
+    write() {
+        console.log('Emitting generated code...');
+        this.ast.emit();
     }
 }
