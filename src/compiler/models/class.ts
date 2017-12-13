@@ -21,6 +21,13 @@ export class Class {
         return this.fullName.split('#')[0];
     }
 
+    get asString(): string {
+        return `{
+            id: ${this.id},
+            fullName: ${this.fullName},
+        }`;
+    }
+
     private extractMethods(classNode: ClassDeclaration) {
         const instanceMethods = classNode.getInstanceMethods();
         for (const instanceMethod of instanceMethods) {

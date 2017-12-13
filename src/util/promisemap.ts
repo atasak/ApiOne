@@ -22,7 +22,11 @@ export class PromiseMap<T> {
         for (const key in this.map) {
             if (this.map.hasOwnProperty(key)) {
                 console.log(`${key}: `);
-                console.log(this.map[key].value);
+                const value = this.map[key].value;
+                //if (value['asString'] != null)
+                //console.log(value.asString);
+                //else
+                console.log(value);
             }
         }
     }

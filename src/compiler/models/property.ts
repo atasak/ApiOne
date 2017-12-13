@@ -35,6 +35,8 @@ export class Property {
     }
 
     private extractDefaultValue(propertyNode: PropertyDeclaration) {
-        // this.defaultValue = propertyNode.getInitializer().getText();
+        const initializer = propertyNode.getInitializer();
+        if (initializer)
+            this.defaultValue = initializer.getText();
     }
 }
