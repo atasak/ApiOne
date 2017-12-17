@@ -1,7 +1,7 @@
 import {readFileSync} from 'fs';
 import {Schemer} from './schemer';
-import {PromiseMap} from '../../util/promisemap';
-import {Class} from '../models/class';
+import {Type} from '../models/type';
+import {Printable} from '../../util/printable';
 
 export class ApiOneCompiler {
     defaultConfig: ApiOneConfig = {
@@ -14,7 +14,7 @@ export class ApiOneCompiler {
 
     config: ApiOneConfig;
     schemer: Schemer;
-    classMap: PromiseMap<Class>;
+    classMap: Map<string, Type>;
 
     loadConfigFromFile(file: string) {
         const contents = readFileSync(file, 'utf8');
@@ -35,7 +35,14 @@ export class ApiOneCompiler {
     }
 
     print() {
-        this.classMap.log();
+        for (const key of this.classMap.keys()) {
+            console.log(`${key}: `);
+            const value = this.classMap.get(key);
+            if (value['asString'] != null)
+                console.log((value as any as Printable).asString());
+            else
+                console.log(value);
+        }
     }
 
     write() {

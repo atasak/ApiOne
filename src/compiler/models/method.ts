@@ -1,22 +1,28 @@
-import {ConstructorDeclaration, MethodDeclaration, ParameterDeclaration} from 'ts-simple-ast';
+import {ClassDeclaration, ConstructorDeclaration, MethodDeclaration, ParameterDeclaration} from 'ts-simple-ast';
 import {Schemer} from '../compiler/schemer';
 import {Type} from './type';
 import {getRelativeFullName, getTypeInfo} from './typeutils';
 import {enumerate} from '../../util/printable';
+import {ClassElement} from './classElement';
 
-export class Method {
+export class Method extends ClassElement {
     name: string;
     parameters: Parameter[] = [];
     returnType: Type;
 
     constructor(protected schemer: Schemer, protected methodNode: MethodDeclaration | ConstructorDeclaration) {
+        super();
         this.extractGenericInfo(methodNode);
         this.extractArguments(methodNode);
     }
 
     asString(): string {
         const params = enumerate(this.parameters, p => `${p.typeAsString()}, `);
-        return `(${params}) => ${this.returnType.typeAsString()}`;
+        return `(${params}) => ${this.returnType.typeAsString}`;
+    }
+
+    transform(classNode: ClassDeclaration) {
+
     }
 
     private extractGenericInfo(methodNode: MethodDeclaration | ConstructorDeclaration) {
@@ -27,8 +33,7 @@ export class Method {
         const parameterNodes = methodNode.getParameters();
         for (const parameterNode of parameterNodes)
             this.parameters.push(new Parameter(this.schemer, parameterNode));
-        getTypeInfo(this.schemer, methodNode.getReturnType())
-            .then(value => this.returnType = value);
+        this.returnType = getTypeInfo(this.schemer, methodNode.getReturnType());
     }
 }
 
@@ -40,11 +45,10 @@ export class Parameter {
     }
 
     typeAsString(): string {
-        return this.type.typeAsString();
+        return this.type.typeAsString;
     }
 
     private getType(parameterNode: ParameterDeclaration) {
-        getTypeInfo(this.schemer, parameterNode.getType())
-            .then(value => this.type = value);
+        this.type = getTypeInfo(this.schemer, parameterNode.getType());
     }
 }

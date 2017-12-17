@@ -9,7 +9,7 @@
     "lib": [
       "es2015"
     ],
-    "outDir": "spec/common/lib",
+    "outDir": "spec/dist",
     "sourceMap": true
   },
   "include": [
