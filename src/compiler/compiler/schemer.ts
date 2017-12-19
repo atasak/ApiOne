@@ -1,31 +1,28 @@
 import Ast, {SourceFile} from 'ts-simple-ast';
-import {PromiseMap} from '../../util/promisemap';
 import {ApiOneConfig} from './compiler';
 import {Class} from '../models/class';
+import {Type} from '../models/type';
+import {getRelativeFullName} from '../models/typeutils';
+import * as path from 'path';
 
 export class Schemer {
-    structures: PromiseMap<Class> = new PromiseMap<Class>();
+    structures: Map<string, Type> = new Map<string, Type>();
     ast: Ast;
 
     constructor(public config: ApiOneConfig) {
     }
 
-    run(): PromiseMap<Class> {
+    run(): Map<string, Type> {
         const sources = this.getSources();
-        this.extractSources(sources);
-        this.structures.finalize();
+        this.ast.forgetNodesCreatedInBlock(_ => {
+            this.extractSources(sources);
+            this.transformSources();
+        });
         return this.structures;
     }
 
     getSources(): SourceFile[] {
-        const config = {
-            compilerOptions: {
-                out: this.config.exportPath,
-                declaration: true,
-            },
-        };
-        console.log(config);
-        this.ast = new Ast(config);
+        this.ast = new Ast({tsConfigFilePath: 'tsconfig.apione.json'});
         this.ast.addSourceFiles(`${this.config.sourcePath}/**/*.ts`);
         return this.ast.getSourceFiles();
     }
@@ -36,18 +33,43 @@ export class Schemer {
     }
 
     extractStructures(source: SourceFile) {
-        for (const classNode of source.getClasses()) {
-            const clazz = new Class(this, classNode);
-            this.structures.insert(clazz.fullName, clazz);
+        this.ast.forgetNodesCreatedInBlock(_ => {
+            for (const classNode of source.getClasses()) {
+                const fullName = getRelativeFullName(this, classNode.getSymbol());
+                const clazz = Class.Construct(this, fullName);
+                clazz.isOf(classNode);
+            }
+        });
+    }
+
+    transformSources() {
+        this.addImports();
+        for (const structure of this.structures.values()) {
+            if (structure instanceof Class)
+                structure.transform();
         }
     }
 
-    getTypeByFullName(name: string): Promise<Class> {
-        return this.structures.get(name);
+    addImports() {
+        const mask = path.join(process.cwd(), this.config.sourcePath, '**/*.ts');
+        for (const source of this.ast.getSourceFiles(mask))
+            source.addImport({
+                namedImports: [
+                    {name: 'ClassWrapper'},
+                    {name: 'ListWrapper'},
+                    {name: 'DictWrapper'},
+                    {name: 'VarWrapper'},
+                ],
+                moduleSpecifier: 'apiwrapper',
+            });
     }
 
     write() {
-        console.log ('Writing...');
-        this.ast.emit();
+        this.ast.forgetNodesCreatedInBlock(_ => {
+            console.log('Emitting generated code...');
+            const diag = this.ast.emit().getDiagnostics();
+            for (const d of diag)
+                console.log(`${d.getSourceFile().getFilePath()}.${d.getStart()}: ${d.getMessageText()}`);
+        });
     }
 }

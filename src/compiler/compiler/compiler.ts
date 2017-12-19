@@ -1,5 +1,7 @@
 import {readFileSync} from 'fs';
 import {Schemer} from './schemer';
+import {Type} from '../models/type';
+import {Printable} from '../../util/printable';
 
 export class ApiOneCompiler {
     defaultConfig: ApiOneConfig = {
@@ -11,8 +13,8 @@ export class ApiOneCompiler {
     };
 
     config: ApiOneConfig;
-
     schemer: Schemer;
+    classMap: Map<string, Type>;
 
     loadConfigFromFile(file: string) {
         const contents = readFileSync(file, 'utf8');
@@ -27,11 +29,20 @@ export class ApiOneCompiler {
     }
 
     run() {
-        console.log('Compiling as ApiOne with config: ');
-        console.log(this.config);
+        console.log('Embedding ApiOne...');
         this.schemer = new Schemer(this.config);
-        const classMap = this.schemer.run();
-        classMap.log();
+        this.classMap = this.schemer.run();
+    }
+
+    print() {
+        for (const key of this.classMap.keys()) {
+            console.log(`${key}: `);
+            const value = this.classMap.get(key);
+            if (value['asString'] != null)
+                console.log((value as any as Printable).asString());
+            else
+                console.log(value);
+        }
     }
 
     write() {

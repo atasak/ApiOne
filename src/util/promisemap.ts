@@ -1,5 +1,4 @@
 import {SyncPromise} from './syncpromise';
-import {Type} from '../compiler/models/type';
 import {Printable} from './printable';
 
 export class PromiseMap<T> {
@@ -11,6 +10,14 @@ export class PromiseMap<T> {
 
     get(key: string): Promise<T> {
         return this.getNullChecked(key).promise;
+    }
+
+    has(key: string): boolean {
+        return this.map[key] != null;
+    }
+
+    directGet(key: string): T {
+        return this.map[key].value;
     }
 
     finalize() {

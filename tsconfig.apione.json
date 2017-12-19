@@ -11,17 +11,23 @@
       "es2015.promise",
       "es2015.proxy"
     ],
-    "outDir": "dist",
-    "sourceMap": true
+    "outDir": "spec/dist",
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "apiwrapper": [
+        "src/runtime/contentwrappers"
+      ]
+    }
   },
   "include": [
-    "src"
+    "spec/common"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "spec",
     "**/*.bak/*",
-    "src/compiler/templates"
+    "src"
   ]
 }

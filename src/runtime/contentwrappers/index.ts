@@ -1,0 +1,1 @@
+export {ClassWrapper} from './classwrapper';

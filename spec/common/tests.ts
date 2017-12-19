@@ -7,8 +7,7 @@ export class A {
     }
 }
 
-class B extends A {
-    str: string = 'Nope';
+export class B extends A {
     x: { [key: string]: A } = {};
     y: string[];
     a: A;
