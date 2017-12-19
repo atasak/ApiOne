@@ -13,4 +13,4 @@ npm-debug.log
 /dist/
 /src/**/*.js
 /spec/**/*.js
-/spec/common/lib
+/spec/dist
