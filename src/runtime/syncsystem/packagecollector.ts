@@ -1,4 +1,6 @@
+import {OneMap} from '../../util/onemap';
 import {Package} from './package';
+import Timer = NodeJS.Timer;
 
 export type PackageType = 'resolve' | 'broadcast';
 export type PackageOp = 'resolve' | 'additive' | 'substractive';
@@ -6,10 +8,10 @@ export type PackageOp = 'resolve' | 'additive' | 'substractive';
 export class PackageCollector {
     private resolvePackage = new CollectingPackage ();
     private broadcastPackage = new CollectingPackage ();
-    private channels = new Map<string, CollectingPackage> ();
-    private timeout = null;
+    private channels = new OneMap<string, CollectingPackage> (() => new CollectingPackage ());
+    private timeout: Timer | null = null;
 
-    constructor (private callback: (Package, PackageType, string?) => void) {
+    constructor (private callback: (pack: Package, type: PackageType, receiver?: string) => void) {
     }
 
     resolve (type: string, id: string, channel?: string) {
@@ -26,17 +28,29 @@ export class PackageCollector {
     }
 
     sendPackage (channel: string, packageType: PackageType, receiver?: string) {
-        this.callback (this.channels[channel].toPackage (), packageType, receiver);
+        const channelCollector = this.channels.get (channel);
+        if (channelCollector != null && !channelCollector.empty ()) {
+            this.callback (channelCollector.toPackage (), packageType, receiver);
+            this.channels.delete (channel);
+        }
+    }
+
+    private getCollector (pack: PackageType, channel?: string): CollectingPackage {
+        let collect: CollectingPackage;
+        if (channel != null)
+            collect = this.channels.getOrCreate (channel);
+        else
+            collect = {
+                resolve: this.resolvePackage,
+                broadcast: this.broadcastPackage,
+            }[pack];
+        return collect;
     }
 
     private broadcast (pack: PackageType, op: PackageOp, type: string, id: string, json: string, channel?: string) {
-        if (channel != null && this.channels[channel] == null)
-            this.channels[channel] = new CollectingPackage ();
+        const collect = this.getCollector (pack, channel);
 
-        const collect = channel == null ? this[pack + 'Package'] : this.channels[channel];
-        if (!collect[op].has (type))
-            collect[op].set (type, new Map<string, string> ());
-        collect[op][type].set (id, json);
+        collect[op].getOrCreate (type).set (id, json);
 
         if (channel == null && this.timeout == null)
             this.setTimeout ();
@@ -44,17 +58,25 @@ export class PackageCollector {
 
     private setTimeout () {
         this.timeout = setTimeout (() => {
-            this.callback (this.resolvePackage.toPackage (), 'resolve');
-            this.callback (this.broadcastPackage.toPackage (), 'broadcast');
+            if (!this.resolvePackage.empty ())
+                this.callback (this.resolvePackage.toPackage (), 'resolve');
+            if (!this.broadcastPackage.empty ())
+                this.callback (this.broadcastPackage.toPackage (), 'broadcast');
+            this.resolvePackage = new CollectingPackage ();
+            this.broadcastPackage = new CollectingPackage ();
         }, 0);
     }
 }
 
-class CollectingPackage {
-    resolve = new Map<string, Map<string, string>> ();
+function mapCreator (): Map<string, string> {
+    return new Map<string, string> ();
+}
 
-    additive = new Map<string, Map<string, string>> ();
-    substractive = new Map<string, Map<string, string>> ();
+class CollectingPackage {
+    resolve = new OneMap<string, Map<string, string>> (mapCreator);
+
+    additive = new OneMap<string, Map<string, string>> (mapCreator);
+    substractive = new OneMap<string, Map<string, string>> (mapCreator);
 
     toPackage (): Package {
         const pack = new Package ();
@@ -65,9 +87,9 @@ class CollectingPackage {
     }
 
     flatten (map: Map<string, Map<string, string>>): { [key: string]: string[] } {
-        const newMap = {};
+        const newMap: { [key: string]: string[] } = {};
         map.forEach ((instances, type) => {
-            const array = [];
+            const array: string[] = [];
             instances.forEach ((_, instanceId) =>
                 array.push (instanceId));
             newMap[type] = array;
@@ -76,13 +98,17 @@ class CollectingPackage {
     }
 
     unMap (map: Map<string, Map<string, string>>): { [key: string]: { [key: string]: string } } {
-        const newMap = {};
+        const newMap: { [key: string]: { [key: string]: string } } = {};
         map.forEach ((instances, type) => {
-            const subMap = {};
+            const subMap: { [key: string]: string } = {};
             instances.forEach ((instance, instanceId) =>
                 subMap[instanceId] = instance);
             newMap[type] = subMap;
         });
         return newMap;
+    }
+
+    empty (): boolean {
+        return this.resolve.size + this.additive.size + this.substractive.size === 0;
     }
 }

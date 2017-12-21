@@ -35,13 +35,11 @@ export class ApiOneCompiler {
     }
 
     print() {
-        for (const key of this.classMap.keys()) {
+        for (const entry of this.classMap.entries()) {
+            const key = entry[0] as string;
+            const value = entry[1] as Type;
             console.log(`${key}: `);
-            const value = this.classMap.get(key);
-            if (value['asString'] != null)
-                console.log((value as any as Printable).asString());
-            else
-                console.log(value);
+            console.log((value as any as Printable).asString());
         }
     }
 

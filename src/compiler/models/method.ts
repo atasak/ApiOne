@@ -4,6 +4,7 @@ import {Type} from './type';
 import {getTypeInfo} from './typeutils';
 import {enumerate} from '../../util/printable';
 import {ClassElement} from './classElement';
+import {stub} from '../../../dist/util/devutils';
 
 export class Method extends ClassElement {
     name: string;
@@ -22,11 +23,14 @@ export class Method extends ClassElement {
     }
 
     transform(classNode: ClassDeclaration) {
-
+        stub(classNode);
     }
 
     private extractGenericInfo(methodNode: MethodDeclaration | ConstructorDeclaration) {
-        this.name = methodNode.getSymbol().getName();
+        const symbol = methodNode.getSymbol();
+        if (symbol == null)
+            throw new Error();
+        this.name = symbol.getName();
     }
 
     private extractArguments(methodNode: MethodDeclaration | ConstructorDeclaration) {
@@ -50,7 +54,10 @@ export class Parameter {
     }
 
     private getNameAndType(parameterNode: ParameterDeclaration) {
-        this.name = parameterNode.getSymbol().getName();
+        const symbol = parameterNode.getSymbol();
+        if (symbol == null)
+            throw new Error();
+        this.name = symbol.getName();
         this.type = getTypeInfo(this.schemer, parameterNode.getType());
     }
 }

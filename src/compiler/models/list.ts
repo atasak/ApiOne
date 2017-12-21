@@ -7,9 +7,7 @@ import {Printable} from '../../util/printable';
 export class List extends Type implements Printable {
     readonly valueManagerName = 'ListManager';
 
-    private constructor(private schemer: Schemer,
-                        private typeNode: AstType,
-                        private type: Type) {
+    private constructor(private type: Type) {
         super();
     }
 
@@ -18,11 +16,14 @@ export class List extends Type implements Printable {
     }
 
     static Construct(schemer: Schemer, typeNode: AstType): List {
-        const type = getTypeInfo(schemer, typeNode.getArrayType());
+        const arrayType = typeNode.getArrayType();
+        if (arrayType == null)
+            throw new Error();
+        const type = getTypeInfo(schemer, arrayType);
         const mapType = List.TypeAsString(type);
 
         if (!schemer.structures.has(mapType))
-            schemer.structures.set(mapType, new List(schemer, typeNode, type));
+            schemer.structures.set(mapType, new List(type));
         return schemer.structures.get(mapType) as List;
     }
 

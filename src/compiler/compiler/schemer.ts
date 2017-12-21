@@ -32,7 +32,11 @@ export class Schemer {
 
     extractStructures(source: SourceFile) {
         for (const classNode of source.getClasses()) {
-            const fullName = getRelativeFullName(this, classNode.getSymbol());
+            const symbol = classNode.getSymbol();
+            if (symbol == null)
+                throw new Error();
+
+            const fullName = getRelativeFullName(this, symbol);
             const clazz = Class.Construct(this, fullName);
             clazz.isOf(classNode);
         }
@@ -64,8 +68,12 @@ export class Schemer {
         this.ast.forgetNodesCreatedInBlock(_ => {
             console.log('Emitting generated code...');
             const diag = this.ast.emit().getDiagnostics();
-            for (const d of diag)
-                console.log(`${d.getSourceFile().getFilePath()}.${d.getStart()}: ${d.getMessageText()}`);
+            for (const d of diag) {
+                const sourceFile = d.getSourceFile();
+                if (sourceFile == null)
+                    throw new Error();
+                console.log(`${sourceFile.getFilePath()}.${d.getStart()}: ${d.getMessageText()}`);
+            }
             if (diag.length === 0)
                 console.log('No errors!');
         });

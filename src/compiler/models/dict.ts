@@ -9,10 +9,7 @@ export type IndexType = 'String' | 'Number';
 export class Dict extends Type implements Printable {
     readonly valueManagerName = 'DictManager';
 
-    private constructor(private schemer: Schemer,
-                        private typeNode: AstType,
-                        private indexType,
-                        private type: Type) {
+    private constructor(private indexType: IndexType, private type: Type) {
         super();
     }
 
@@ -26,7 +23,7 @@ export class Dict extends Type implements Printable {
         const mapType = Dict.TypeAsString(indexType, type);
 
         if (!schemer.structures.has(mapType))
-            schemer.structures.set(mapType, new Dict(schemer, typeNode, indexType, type));
+            schemer.structures.set(mapType, new Dict(indexType, type));
         return schemer.structures.get(mapType) as Dict;
     }
 
@@ -39,10 +36,13 @@ export class Dict extends Type implements Printable {
             return 'String';
         if (typeNode.getNumberIndexType() !== undefined)
             return 'Number';
+        return 'String';
     }
 
     private static TypeOf(schemer: Schemer, typeNode: AstType) {
         const mapTypeNode = typeNode.getNumberIndexType() || typeNode.getStringIndexType();
+        if (mapTypeNode == null)
+            throw new Error();
         return getTypeInfo(schemer, mapTypeNode);
     }
 

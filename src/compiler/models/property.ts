@@ -79,7 +79,10 @@ export class Property extends ClassElement {
     }
 
     private extractGenericInfo(propertyNode: PropertyDeclaration) {
-        this.name = propertyNode.getSymbol().getName();
+        const symbol = propertyNode.getSymbol();
+        if (symbol == null)
+            throw new Error();
+        this.name = symbol.getName();
     }
 
     private extractTypeInfo(propertyNode: PropertyDeclaration) {

@@ -18,16 +18,17 @@
       "apiwrapper": [
         "src/runtime/contentwrappers"
       ]
-    }
+    },
+    "rootDir": "spec/common"
   },
   "include": [
     "spec/common"
   ],
   "exclude": [
     "node_modules",
+    "src",
+    "apiwrapper",
     "dist",
-    "spec",
     "**/*.bak/*",
-    "src"
   ]
 }

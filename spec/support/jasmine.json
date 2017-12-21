@@ -8,5 +8,13 @@
     "helpers/**/*.ts"
   ],
   "stopSpecOnExpectationFailure": false,
-  "random": false
+  "random": false,
+  "reporters": [
+    {
+      "name": "jasmine-spec-reporter#SpecReporter",
+      "options": {
+        "displayStackTrace": "all"
+      }
+    }
+  ]
 }

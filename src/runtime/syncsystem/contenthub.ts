@@ -1,37 +1,26 @@
+import {stub} from '../../util/devutils';
+import {ContentManager} from './contentmanager';
 import {IHubConnection, IHubNode} from './hubconnection';
 import {Package} from './package';
-import {ContentManager} from './contentmanager';
 import {PackageCollector, PackageType} from './packagecollector';
 
-export class ContentHub<T> extends ContentManager<T> implements IHubNode {
-    server: IHubConnection = null;
+export class ContentHub<T> extends PackageCollector implements IHubNode {
+    server: IHubConnection | null = null;
     peers: IHubConnection[] = [];
 
-    packageCollector = new PackageCollector ((pack, packageType, receiver) =>
-        this.broadcast (pack, packageType, receiver));
+    contentManager = new ContentManager<T> ();
 
     constructor () {
-        super ();
-    }
-
-    resolve (type: string, id: string): boolean {
-        if (this.server == null)
-            return false;
-    }
-
-    additiveBroadcast (type: string, id: string, json: string, channel?: string) {
-    }
-
-    substractiveBroadcast (type: string, id: string, channel?: string) {
-    }
-
-    sendPackage (channel: string, packageType: PackageType, receiver?: string) {
-
+        super ((pack, packageType, receiver) => this.send (pack, packageType, receiver));
     }
 
     sync (pack: Package) {
+        stub (pack);
     }
 
-    private broadcast (pack: Package, packageType: PackageType, receiver: string) {
+    private send (pack: Package, packageType: PackageType, receiver?: string) {
+        stub (pack);
+        stub (packageType);
+        stub (receiver);
     }
 }

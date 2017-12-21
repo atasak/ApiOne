@@ -1,4 +1,4 @@
-import {SyncPromise} from './syncpromise';
+/*import {SyncPromise} from './syncpromise';
 import {Printable} from './printable';
 
 export class PromiseMap<T> {
@@ -62,3 +62,4 @@ class PromiseWrapper<T> {
             this.value = value);
     }
 }
+*/

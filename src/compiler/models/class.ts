@@ -53,7 +53,10 @@ export class Class extends Type implements Printable {
     }
 
     private extractGenericInfo(classNode: ClassDeclaration) {
-        this.name = classNode.getSymbol().getName();
+        const symbol = classNode.getSymbol();
+        if (symbol == null)
+            throw new Error();
+        this.name = symbol.getName();
     }
 
     private extractConstructor(classNode: ClassDeclaration) {

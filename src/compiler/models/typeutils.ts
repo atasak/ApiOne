@@ -10,13 +10,16 @@ import {Class} from './class';
 export function getTypeInfo(schemer: Schemer, typeNode: AstType): Type {
     typeNode = typeNode.getApparentType();
     const typetext = typeNode.getText();
-    if ({'String': true, 'Number': true, 'Boolean': true}[typetext] !== undefined)
-        return new Var(schemer, typetext as BaseType);
+    if (typetext === 'String' || typetext === 'Number' || typetext === 'Boolean')
+        return new Var(typetext as BaseType);
     if (typeNode.isArrayType())
         return List.Construct(schemer, typeNode);
     if (typeNode.getStringIndexType() || typeNode.getNumberIndexType())
         return Dict.Construct(schemer, typeNode);
-    return Class.Construct(schemer, getRelativeFullName(schemer, typeNode.getSymbol()));
+    const symbol = typeNode.getSymbol();
+    if (symbol == null)
+        throw Error();
+    return Class.Construct(schemer, getRelativeFullName(schemer, symbol));
 }
 
 export function getRelativeFullName(schemer: Schemer, symbol: Symbol): string {
