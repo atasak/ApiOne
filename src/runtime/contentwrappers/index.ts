@@ -1,4 +1,4 @@
 export {ClassWrapper} from './classwrapper';
-export {ListWrapper} from './listwrapper';
 export {DictWrapper} from './dictwrapper';
+export {ListWrapper} from './listwrapper';
 export {VarWrapper} from './varwrapper';

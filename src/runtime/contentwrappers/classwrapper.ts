@@ -17,3 +17,4 @@ export class ClassWrapper<T> extends AbstractWrapper<T> {
         this.data = t;
     }
 }
+

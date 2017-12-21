@@ -39,11 +39,11 @@ export class Schemer {
     }
 
     transformSources() {
-        this.addImports();
         for (const structure of this.structures.values()) {
             if (structure instanceof Class)
                 structure.transform();
         }
+        this.addImports();
     }
 
     addImports() {
@@ -52,11 +52,11 @@ export class Schemer {
             source.addImport({
                 namedImports: [
                     {name: 'ClassWrapper'},
-                    {name: 'ListWrapper'},
                     {name: 'DictWrapper'},
+                    {name: 'ListWrapper'},
                     {name: 'VarWrapper'},
                 ],
-                moduleSpecifier: 'apiwrapper',
+                moduleSpecifier: '../../src/runtime/contentwrappers/classwrapper',
             });
     }
 
