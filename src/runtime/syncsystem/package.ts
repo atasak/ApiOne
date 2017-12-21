@@ -4,16 +4,20 @@ export const statusText = {
     400: 'Bad request',
     403: 'Forbidden',
     404: 'Not found',
-    500: 'Error'
+    500: 'Network Error',
 };
 
 export class Package {
-    trace: string[];
-    status: Status[];
-    statusMap: {[key: number]: string[]};
+    trace: string[] = [];
+    status: Status[] = [];
+    statusMap: { [key: string]: { [key: string]: Status } } = {};
 
-    resolve: string[];
+    resolve: { [key: string]: string[] } = {};
 
-    additive: { [key: string]: any[] };
-    substractive: { [key: string]: string[] };
+    additive: { [key: string]: { [key: string]: any } };
+    substractive: { [key: string]: string[] } = {};
+
+    toJson (): string {
+        return JSON.stringify (this);
+    }
 }

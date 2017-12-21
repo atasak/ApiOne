@@ -75,7 +75,7 @@ export class Class extends Type implements Printable {
         const instanceMethods = classNode.getInstanceMethods();
         for (const instanceMethod of instanceMethods) {
             const method = new Method(this.schemer, instanceMethod);
-            this.properties[method.name] = method;
+            this.properties.set(method.name, method);
         }
     }
 }

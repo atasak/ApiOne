@@ -14,16 +14,14 @@ export class Schemer {
 
     run(): Map<string, Type> {
         const sources = this.getSources();
-        this.ast.forgetNodesCreatedInBlock(_ => {
-            this.extractSources(sources);
-            this.transformSources();
-        });
+        this.extractSources(sources);
+        this.transformSources();
         return this.structures;
     }
 
     getSources(): SourceFile[] {
         this.ast = new Ast({tsConfigFilePath: 'tsconfig.apione.json'});
-        this.ast.addSourceFiles(`${this.config.sourcePath}/**/*.ts`);
+        this.ast.addExistingSourceFiles(`${this.config.sourcePath}/**/*.ts`);
         return this.ast.getSourceFiles();
     }
 
@@ -33,21 +31,19 @@ export class Schemer {
     }
 
     extractStructures(source: SourceFile) {
-        this.ast.forgetNodesCreatedInBlock(_ => {
-            for (const classNode of source.getClasses()) {
-                const fullName = getRelativeFullName(this, classNode.getSymbol());
-                const clazz = Class.Construct(this, fullName);
-                clazz.isOf(classNode);
-            }
-        });
+        for (const classNode of source.getClasses()) {
+            const fullName = getRelativeFullName(this, classNode.getSymbol());
+            const clazz = Class.Construct(this, fullName);
+            clazz.isOf(classNode);
+        }
     }
 
     transformSources() {
-        this.addImports();
         for (const structure of this.structures.values()) {
             if (structure instanceof Class)
                 structure.transform();
         }
+        this.addImports();
     }
 
     addImports() {
@@ -56,11 +52,11 @@ export class Schemer {
             source.addImport({
                 namedImports: [
                     {name: 'ClassWrapper'},
-                    {name: 'ListWrapper'},
                     {name: 'DictWrapper'},
+                    {name: 'ListWrapper'},
                     {name: 'VarWrapper'},
                 ],
-                moduleSpecifier: 'apiwrapper',
+                moduleSpecifier: '../../src/runtime/contentwrappers/classwrapper',
             });
     }
 

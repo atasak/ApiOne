@@ -1,7 +1,7 @@
 import {ClassDeclaration, ConstructorDeclaration, MethodDeclaration, ParameterDeclaration} from 'ts-simple-ast';
 import {Schemer} from '../compiler/schemer';
 import {Type} from './type';
-import {getRelativeFullName, getTypeInfo} from './typeutils';
+import {getTypeInfo} from './typeutils';
 import {enumerate} from '../../util/printable';
 import {ClassElement} from './classElement';
 
@@ -18,7 +18,7 @@ export class Method extends ClassElement {
 
     asString(): string {
         const params = enumerate(this.parameters, p => `${p.typeAsString()}, `);
-        return `(${params}) => ${this.returnType.typeAsString}`;
+        return `${this.name}: (${params}) => ${this.returnType.typeAsString}`;
     }
 
     transform(classNode: ClassDeclaration) {
@@ -26,7 +26,7 @@ export class Method extends ClassElement {
     }
 
     private extractGenericInfo(methodNode: MethodDeclaration | ConstructorDeclaration) {
-        this.name = getRelativeFullName(this.schemer, methodNode.getSymbol());
+        this.name = methodNode.getSymbol().getName();
     }
 
     private extractArguments(methodNode: MethodDeclaration | ConstructorDeclaration) {
@@ -38,17 +38,19 @@ export class Method extends ClassElement {
 }
 
 export class Parameter {
+    name: string;
     type: Type;
 
     constructor(private schemer: Schemer, parameterNode: ParameterDeclaration) {
-        this.getType(parameterNode);
+        this.getNameAndType(parameterNode);
     }
 
     typeAsString(): string {
         return this.type.typeAsString;
     }
 
-    private getType(parameterNode: ParameterDeclaration) {
+    private getNameAndType(parameterNode: ParameterDeclaration) {
+        this.name = parameterNode.getSymbol().getName();
         this.type = getTypeInfo(this.schemer, parameterNode.getType());
     }
 }

@@ -1,11 +1,12 @@
 {
-    "spec_dir": "spec",
-    "spec_files": [
-        "**/*[sS]pec.ts"
-    ],
-    "helpers": [
-        "helpers/**/*.ts"
-    ],
-    "stopSpecOnExpectationFailure": false,
-    "random": false
+  "spec_dir": "spec",
+  "spec_files": [
+    "compiler/**/*.spec.ts",
+    "runtime/**/*.spec.ts"
+  ],
+  "helpers": [
+    "helpers/**/*.ts"
+  ],
+  "stopSpecOnExpectationFailure": false,
+  "random": false
 }
