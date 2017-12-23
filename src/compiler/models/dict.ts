@@ -7,7 +7,7 @@ import {Printable} from '../../util/printable';
 export type IndexType = 'String' | 'Number';
 
 export class Dict extends Type implements Printable {
-    readonly valueManagerName = 'DictManager';
+    readonly valueManagerName = 'DictWrapper';
 
     private constructor(private indexType: IndexType, private type: Type) {
         super();

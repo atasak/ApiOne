@@ -1,7 +1,5 @@
 {
+  "rootType": "A",
   "sourcePath": "spec/common",
-  "rootTypeName": "ApiRoot",
-  "exportPath": "spec/common/lib",
-  "index": "src/index.ts",
-  "indexAsPath": true
+  "printDatastructures": true
 }

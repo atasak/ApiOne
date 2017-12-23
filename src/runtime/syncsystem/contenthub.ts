@@ -1,4 +1,4 @@
-import {stub} from '../../util/devutils';
+import {stub} from '../../util/utils.dev';
 import {ContentManager} from './contentmanager';
 import {IHubConnection, IHubNode} from './hubconnection';
 import {Package} from './package';

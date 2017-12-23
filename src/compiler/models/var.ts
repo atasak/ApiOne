@@ -3,7 +3,7 @@ import {Type} from './type';
 export type BaseType = 'String' | 'Number' | 'Boolean';
 
 export class Var extends Type {
-    readonly valueManagerName = 'VarManager';
+    readonly valueManagerName = 'VarWrapper';
 
     constructor(public type: BaseType) {
         super();

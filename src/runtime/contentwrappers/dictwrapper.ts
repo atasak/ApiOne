@@ -1,7 +1,7 @@
 import {AbstractWrapper} from './abstractwrapper';
 
 export class DictWrapper<T> extends AbstractWrapper<T> {
-    private constructor() {
+    constructor() {
         super();
     }
 

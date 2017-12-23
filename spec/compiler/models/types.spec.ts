@@ -18,12 +18,15 @@ describe ('The type models', () => {
     it ('should return the correct type for classes', () => {
         expect (classType.typeAsString).toBe ('A');
     });
+
     it ('should return the correct type for dictionaries', () => {
         expect (dictType.typeAsString).toBe ('{ [key: string]: A }');
     });
+
     it ('should return the correct type for lists', () => {
         expect (listType.typeAsString).toBe ('string[]');
     });
+
     it ('should return the correct type for variables', () => {
         expect ((classType.properties.get ('str') as Property).type.typeAsString).toBe ('string');
         expect ((classType.properties.get ('num') as Property).type.typeAsString).toBe ('number');
@@ -38,7 +41,6 @@ describe ('The method models', () => {
         const schemer = compileTests ();
         const classType = schemer.structures.get ('tests.ts#A') as Class;
         method = classType.properties.get ('method') as Method;
-        console.log (classType.properties.keys ());
     });
 
     it ('should extract methods', () => {

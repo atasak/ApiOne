@@ -5,7 +5,7 @@ import {getTypeInfo} from './typeutils';
 import {Printable} from '../../util/printable';
 
 export class List extends Type implements Printable {
-    readonly valueManagerName = 'ListManager';
+    readonly valueManagerName = 'ListWrapper';
 
     private constructor(private type: Type) {
         super();

@@ -17,15 +17,18 @@
   "scripts": {
     "build": "if exist dist\\ rd /s /q dist && tsc",
     "build:linux": "rm -rf dist && tsc",
-    "test": "jasmine-ts"
+    "run": "node dist/compiler/runner.js",
+    "test": "jasmine-ts",
+    "doc": "typedoc --out doc src --exclude src/runtime/lib.bak/**/*"
   },
   "dependencies": {
     "@types/node": "^8.0.51",
-    "ts-simple-ast": "^4.1.0"
+    "ts-simple-ast": "^4.2.1"
   },
   "devDependencies": {
     "@types/jasmine": "^2.8.0",
     "jasmine": "^2.8.0",
+    "jasmine-spec-reporter": "^4.2.1",
     "jasmine-ts": "^0.2.1",
     "tslint": "^5.8.0"
   }

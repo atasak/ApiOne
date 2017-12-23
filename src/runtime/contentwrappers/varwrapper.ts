@@ -1,19 +1,19 @@
 import {AbstractWrapper} from './abstractwrapper';
 
 export class VarWrapper<T> extends AbstractWrapper<T> {
-    private constructor() {
-        super();
+    constructor () {
+        super ();
     }
 
-    _get(): T {
+    _get (): T {
         return this.data;
     }
 
-    $get(): Promise<T> {
-        return Promise.resolve(this.data);
+    $get (): Promise<T> {
+        return Promise.resolve (this.data);
     }
 
-    set(t: T) {
+    set (t: T) {
         this.data = t;
     }
 }

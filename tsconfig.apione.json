@@ -18,8 +18,7 @@
       "apiwrapper": [
         "src/runtime/contentwrappers"
       ]
-    },
-    "rootDir": "spec/common"
+    }
   },
   "include": [
     "spec/common"

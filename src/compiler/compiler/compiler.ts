@@ -1,57 +1,71 @@
 import {readFileSync} from 'fs';
-import {Schemer} from './schemer';
-import {Type} from '../models/type';
 import {Printable} from '../../util/printable';
+import {Type} from '../models/type';
+import {Schemer} from './schemer';
 
 export class ApiOneCompiler {
     defaultConfig: ApiOneConfig = {
+        tsConfigFilePath: 'tsconfig.apione.json',
         sourcePath: 'common',
-        rootTypeName: 'ApiRoot',
-        exportPath: 'common/lib',
-        index: 'apione',
-        indexAsPath: false,
+        rootType: 'ApiRoot',
+        emit: true,
+        silent: false,
+        printDatastructures: false,
     };
 
     config: ApiOneConfig;
     schemer: Schemer;
     classMap: Map<string, Type>;
 
-    loadConfigFromFile(file: string) {
-        const contents = readFileSync(file, 'utf8');
-        const json = JSON.parse(contents);
-        this.loadConfig(json);
-    }
-
-    loadConfig(config: any) {
+    /**
+     * Constructor
+     *a
+     */
+    constructor () {
         this.config = {} as ApiOneConfig;
-        Object.assign(this.config, this.defaultConfig);
-        Object.assign(this.config, config);
+        Object.assign (this.config, this.defaultConfig);
     }
 
-    run() {
-        console.log('Embedding ApiOne...');
-        this.schemer = new Schemer(this.config);
-        this.classMap = this.schemer.run();
+    loadConfigFromFile (file: string) {
+        const contents = readFileSync (file, 'utf8');
+        const json = JSON.parse (contents);
+        this.loadConfig (json);
     }
 
-    print() {
-        for (const entry of this.classMap.entries()) {
+    loadConfig (config: Partial<ApiOneConfig>) {
+        Object.assign (this.config, config);
+    }
+
+    run () {
+        if (!this.config.silent)
+            console.log ('Embedding ApiOne...');
+        this.schemer = new Schemer (this.config);
+        this.classMap = this.schemer.run ();
+        if (this.config.printDatastructures)
+            this.print ();
+        if (this.config.emit)
+            this.write ();
+    }
+
+    print () {
+        for (const entry of this.classMap.entries ()) {
             const key = entry[0] as string;
             const value = entry[1] as Type;
-            console.log(`${key}: `);
-            console.log((value as any as Printable).asString());
+            console.log (`${key}: `);
+            console.log ((value as any as Printable).asString ());
         }
     }
 
-    write() {
-        this.schemer.write();
+    write () {
+        this.schemer.write ();
     }
 }
 
 export class ApiOneConfig {
+    tsConfigFilePath: string;
     sourcePath: string;
-    rootTypeName: string;
-    exportPath: string;
-    index: string;
-    indexAsPath: boolean;
+    rootType: string;
+    emit: boolean;
+    silent: boolean;
+    printDatastructures: boolean;
 }
