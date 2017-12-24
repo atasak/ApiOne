@@ -28,6 +28,6 @@
     "src",
     "apiwrapper",
     "dist",
-    "**/*.bak/*",
+    "**/*.bak/*"
   ]
 }

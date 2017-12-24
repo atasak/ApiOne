@@ -21,7 +21,13 @@
     "pretty": true,
     "strictNullChecks": true,
     "alwaysStrict": true,
-    "strict": true
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "apiwrapper": [
+        "src/runtime/contentwrappers"
+      ]
+    }
   },
   "include": [
     "src"

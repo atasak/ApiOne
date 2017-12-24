@@ -8,9 +8,11 @@ export class ApiOneCompiler {
         tsConfigFilePath: 'tsconfig.apione.json',
         sourcePath: 'common',
         rootType: 'ApiRoot',
-        emit: true,
         silent: false,
         printDatastructures: false,
+        emitTypescript: '',
+        emitJavascript: '',
+        emitDeclaration: '',
     };
 
     config: ApiOneConfig;
@@ -23,41 +25,42 @@ export class ApiOneCompiler {
      */
     constructor () {
         this.config = {} as ApiOneConfig;
-        Object.assign (this.config, this.defaultConfig);
+        Object.assign(this.config, this.defaultConfig);
     }
 
     loadConfigFromFile (file: string) {
-        const contents = readFileSync (file, 'utf8');
-        const json = JSON.parse (contents);
-        this.loadConfig (json);
+        const contents = readFileSync(file, 'utf8');
+        const json = JSON.parse(contents);
+        this.loadConfig(json);
     }
 
     loadConfig (config: Partial<ApiOneConfig>) {
-        Object.assign (this.config, config);
+        Object.assign(this.config, config);
     }
 
     run () {
         if (!this.config.silent)
-            console.log ('Embedding ApiOne...');
-        this.schemer = new Schemer (this.config);
-        this.classMap = this.schemer.run ();
+            console.log('Embedding ApiOne...');
+        this.schemer = new Schemer(this.config);
+        this.classMap = this.schemer.run();
+
         if (this.config.printDatastructures)
-            this.print ();
-        if (this.config.emit)
-            this.write ();
+            this.print();
+        if (this.config.emitTypescript !== '')
+            this.schemer.gen();
+        if (this.config.emitJavascript !== '' || this.config.emitDeclaration !== '')
+            this.schemer.emit();
+        if (!this.config.silent)
+            this.schemer.diagnose();
     }
 
     print () {
-        for (const entry of this.classMap.entries ()) {
+        for (const entry of this.classMap.entries()) {
             const key = entry[0] as string;
             const value = entry[1] as Type;
-            console.log (`${key}: `);
-            console.log ((value as any as Printable).asString ());
+            console.log(`${key}: `);
+            console.log((value as any as Printable).asString());
         }
-    }
-
-    write () {
-        this.schemer.write ();
     }
 }
 
@@ -65,7 +68,9 @@ export class ApiOneConfig {
     tsConfigFilePath: string;
     sourcePath: string;
     rootType: string;
-    emit: boolean;
     silent: boolean;
     printDatastructures: boolean;
+    emitTypescript: string;
+    emitJavascript: string;
+    emitDeclaration: string;
 }

@@ -1,5 +1,8 @@
 {
   "rootType": "A",
   "sourcePath": "spec/common",
-  "printDatastructures": true
+  "printDatastructures": true,
+  "emitTypescript": "../gen",
+  "emitJavascript": "../dist",
+  "emitDeclaration": "../dist"
 }

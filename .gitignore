@@ -14,3 +14,4 @@ npm-debug.log
 /src/**/*.js
 /spec/**/*.js
 /spec/dist
+/spec/gen
