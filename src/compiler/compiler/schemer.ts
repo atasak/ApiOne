@@ -1,13 +1,18 @@
-import * as path from 'path';
-import Ast, {Node, SourceFile} from 'ts-simple-ast';
+import Ast, {Directory, Node, SourceFile} from 'ts-simple-ast';
 import {Class} from '../models/class';
 import {Type} from '../models/type';
 import {getRelativeFullName} from '../models/typeutils';
 import {ApiOneConfig} from './compiler';
 
+interface EmitConfig {
+    declarationDir?: string;
+    outDir?: string;
+}
+
 export class Schemer {
     structures: Map<string, Type> = new Map<string, Type>();
     ast: Ast;
+    genDir: Directory;
 
     constructor (public config: ApiOneConfig) {
     }
@@ -22,7 +27,10 @@ export class Schemer {
     extractSources () {
         this.ast = new Ast({tsConfigFilePath: this.config.tsConfigFilePath});
         this.ast.forgetNodesCreatedInBlock(remember => {
-            const sources = this.ast.addExistingSourceFiles(`${this.config.sourcePath}/**/*.ts`);
+            this.ast.addExistingSourceFiles(`${this.config.sourcePath}/**/*.ts`);
+            const dir = this.ast.getDirectoryOrThrow(this.config.sourcePath);
+            this.genDir = dir.copy(this.config.emitTypescript || '.');
+            const sources = this.genDir.getSourceFiles();
             for (const source of sources)
                 this.extractStructures(source, remember);
         });
@@ -49,8 +57,7 @@ export class Schemer {
     }
 
     addImports () {
-        const mask = path.join(process.cwd(), this.config.sourcePath, '**/*.ts');
-        for (const source of this.ast.getSourceFiles(mask))
+        for (const source of this.genDir.getSourceFiles())
             source.addImport({
                 namedImports: [
                     {name: 'ClassWrapper'},
@@ -79,15 +86,22 @@ export class Schemer {
         this.ast.forgetNodesCreatedInBlock(() => {
             if (!this.config.silent)
                 console.log('Emitting generated code...');
-            this.ast.emit();
+            this.genDir.emitSync(this.getEmitConfig()).getOutputFilePaths();
         });
     }
 
     gen () {
         this.ast.forgetNodesCreatedInBlock(() => {
-            const dir = this.ast.getDirectoryOrThrow(this.config.sourcePath);
-            const genDir = dir.copy(this.config.emitTypescript || '.');
-            genDir.saveUnsavedSourceFilesSync();
+            this.genDir.saveUnsavedSourceFilesSync();
         });
+    }
+
+    private getEmitConfig (): EmitConfig {
+        const config: EmitConfig = {};
+        if (this.config.emitJavascript !== '')
+            config.outDir = this.config.emitJavascript;
+        if (this.config.emitDeclaration !== '')
+            config.declarationDir = this.config.emitDeclaration;
+        return config;
     }
 }

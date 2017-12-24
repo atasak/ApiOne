@@ -25,7 +25,7 @@
     "baseUrl": ".",
     "paths": {
       "apiwrapper": [
-        "src/runtime/contentwrappers"
+        "dist/runtime/contentwrappers"
       ]
     }
   },

@@ -19,7 +19,8 @@
     "build:linux": "rm -rf dist && tsc",
     "run": "node dist/compiler/runner.js",
     "test": "jasmine-ts",
-    "doc": "typedoc --out doc src --exclude src/runtime/lib.bak/**/*"
+    "doc": "typedoc --out doc src --exclude src/runtime/lib.bak/**/*",
+    "prepare:temp": "rm -rf spec/gen spec/dist/*"
   },
   "dependencies": {
     "@types/node": "^8.0.51",
