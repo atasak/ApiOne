@@ -17,6 +17,7 @@
   "scripts": {
     "build": "if exist dist\\ rd /s /q dist && tsc",
     "build:linux": "rm -rf dist && tsc",
+    "build:travis": "tsc",
     "run": "node dist/compiler/runner.js",
     "test": "jasmine-ts",
     "doc": "typedoc --out doc src --exclude src/runtime/lib.bak/**/*",
