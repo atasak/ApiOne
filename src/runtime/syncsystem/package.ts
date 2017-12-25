@@ -8,16 +8,22 @@ export const statusText = {
 };
 
 export class Package {
+    oneInterfaceVersion: string;
+    oneImplementationVersion: string;
+    appInterfaceVersion: string;
+    appImplementationVersion: string;
+
     trace: string[] = [];
     status: Status[] = [];
     statusMap: { [key: string]: { [key: string]: Status } } = {};
 
     resolve: { [key: string]: string[] } = {};
+    follow: { [key: string]: string[] } = {};
 
     additive: { [key: string]: { [key: string]: any } };
     substractive: { [key: string]: string[] } = {};
 
     toJson (): string {
-        return JSON.stringify (this);
+        return JSON.stringify(this);
     }
 }

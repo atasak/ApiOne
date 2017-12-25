@@ -1,3 +1,3 @@
-import {ContentHub} from './runtime/syncsystem/contenthub';
+import {TContentHub} from './runtime/syncsystem/contenthub';
 
-export {ContentHub};
+export {TContentHub};

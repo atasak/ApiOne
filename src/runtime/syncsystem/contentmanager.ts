@@ -1,13 +1,27 @@
-export class ContentManager<T> {
-    protected _entry: T;
+import {TContentPort} from './contentport';
 
-    get entry (): T {
+export class TContentManager<TEntry> {
+    private _content = new Map<string, Map<string, any>>();
+
+    private _entry: TEntry;
+
+    get entry (): TEntry {
         return this._entry;
     }
 
-    protected _content = new Map<string, Map<string, any>> ();
+    getObjectsByType<T> (type: string): Map<string, T> | undefined {
+        return this._content.get(type) as Map<string, T> | undefined;
+    }
 
-    get content (): Map<string, Map<string, any>> {
-        return this._content;
+    getObjectById<T> (type: string, id: string): T | undefined {
+        const objectsOfType = this.getObjectsByType<T>(type);
+        if (objectsOfType === undefined)
+            return undefined;
+        else
+            return objectsOfType.get(id);
+    }
+
+    getNewContentPort (): TContentPort<TEntry> {
+        return new TContentPort(this);
     }
 }
