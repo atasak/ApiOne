@@ -21,10 +21,10 @@
     "run": "node dist/compiler/runner.js",
     "test": "jasmine-ts",
     "doc": "typedoc --out doc src --exclude src/runtime/lib.bak/**/*",
-    "prepare:temp": "rm -rf spec/gen spec/dist/*"
+    "prepare:temp": "rm -rf spec/gen spec/dist && mkdir spec/dist"
   },
   "dependencies": {
-    "@types/node": "^8.0.51",
+    "@types/node": "^8.5.2",
     "ts-simple-ast": "^4.2.1"
   },
   "devDependencies": {
