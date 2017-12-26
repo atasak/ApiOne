@@ -20,12 +20,11 @@
     "build:travis": "tsc",
     "run": "node dist/compiler/runner.js",
     "test": "jasmine-ts",
-    "doc": "typedoc --out doc src --exclude src/runtime/lib.bak/**/*",
-    "prepare:temp": "rm -rf spec/common/gen spec/common/dist && mkdir spec/common/dist"
+    "doc": "typedoc --out doc src --exclude src/runtime/lib.bak/**/*"
   },
   "dependencies": {
     "@types/node": "^8.5.2",
-    "ts-simple-ast": "^4.2.1"
+    "ts-simple-ast": "^5.0.0"
   },
   "devDependencies": {
     "@types/jasmine": "^2.8.0",
