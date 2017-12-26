@@ -1,9 +1,12 @@
-import {OneMap} from '../../util/onemap';
-import {Package} from './package';
+import {flatten, OneMap, unMap} from '../../util/onemap';
+import {id} from '../../util/utils';
+import {
+    AdditiveMap, FollowMap, JSONValType, Map1, Map2, Map3, Obj1, Obj2, Obj3, Package, ResolveMap,
+    SubstractiveMap,
+} from './package';
 import Timer = NodeJS.Timer;
 
 export type PackageType = 'resolve' | 'broadcast';
-export type PackageOp = 'resolve' | 'additive' | 'substractive';
 
 export class PackageCollector {
     private resolvePackage = new CollectingPackage();
@@ -14,16 +17,48 @@ export class PackageCollector {
     constructor (private callback: (pack: Package, type: PackageType, receiver?: string) => void) {
     }
 
-    resolve (type: string, id: string, channel?: string, follow?: string[]) {
-        this.broadcast('resolve', 'resolve', type, id, '', channel, follow);
+    resolve (type: string, id: string, channel?: string, follow: string[] = []) {
+        this.getCollector('resolve', channel)
+            .resolve
+            .getOrCreate(type)
+            .set(id, '');
+
+        for (const f of follow)
+            this.getCollector('resolve', channel)
+                .follow
+                .getOrCreate(type)
+                .set(f, '');
+
+        this.setTimeout(channel);
     }
 
-    additiveBroadcast (type: string, id: string, json: string, channel?: string) {
-        this.broadcast('broadcast', 'additive', type, id, json, channel);
+    addObj (type: string, id: string, data: Map1<JSONValType>, channel?: string) {
+        this.getCollector('broadcast', channel)
+            .additive
+            .getOrCreate(type)
+            .set(id, data);
+
+        this.setTimeout(channel);
     }
 
-    substractiveBroadcast (type: string, id: string, channel?: string) {
-        this.broadcast('broadcast', 'substractive', type, id, '', channel);
+    addField (type: string, id: string, field: string, data: JSONValType, channel?: string) {
+        this.getCollector('broadcast', channel)
+            .additive
+            .getOrCreate(type)
+            .getOrCreate(id)
+            .set(field, data);
+
+        this.setTimeout(channel);
+    }
+
+    deleteKey (type: string, id: string, field: string, channel?: string) {
+        this.getCollector('broadcast', channel)
+            .substractive
+            .getOrCreate(type)
+            .getOrCreate(id)
+            .set(field, '');
+
+        this.setTimeout(channel);
     }
 
     sendPackage (channel: string, packageType: PackageType, receiver?: string) {
@@ -46,27 +81,16 @@ export class PackageCollector {
         return collect;
     }
 
-    private broadcast (pack: PackageType, op: PackageOp, type: string, id: string, json: string, channel?: string, follow: string[] = []) {
-        const collect = this.getCollector(pack, channel);
-
-        collect[op].getOrCreate(type).set(id, json);
-
-        for (const followId of follow)
-            collect.follow.getOrCreate(type).set(followId, json);
-
+    private setTimeout (channel?: string) {
         if (channel == null && this.timeout == null)
-            this.setTimeout();
-    }
-
-    private setTimeout () {
-        this.timeout = setTimeout(() => {
-            if (!this.resolvePackage.empty())
-                this.callback(this.resolvePackage.toPackage(), 'resolve');
-            if (!this.broadcastPackage.empty())
-                this.callback(this.broadcastPackage.toPackage(), 'broadcast');
-            this.resolvePackage = new CollectingPackage();
-            this.broadcastPackage = new CollectingPackage();
-        }, 0);
+            this.timeout = setTimeout(() => {
+                if (!this.resolvePackage.empty())
+                    this.callback(this.resolvePackage.toPackage(), 'resolve');
+                if (!this.broadcastPackage.empty())
+                    this.callback(this.broadcastPackage.toPackage(), 'broadcast');
+                this.resolvePackage = new CollectingPackage();
+                this.broadcastPackage = new CollectingPackage();
+            }, 0);
     }
 }
 
@@ -74,43 +98,43 @@ function mapCreator (): Map<string, string> {
     return new Map<string, string>();
 }
 
-class CollectingPackage {
-    resolve = new OneMap<string, Map<string, string>>(mapCreator);
-    follow = new OneMap<string, Map<string, string>>(mapCreator);
+function doubleMapCreator (): OneMap<string, Map<string, string>> {
+    return new OneMap<string, Map<string, string>>(mapCreator);
+}
 
-    additive = new OneMap<string, Map<string, string>>(mapCreator);
-    substractive = new OneMap<string, Map<string, string>>(mapCreator);
+class CollectingPackage {
+    resolve: ResolveMap = new OneMap<string, Map<string, string>>(mapCreator);
+    follow: FollowMap = new OneMap<string, Map<string, string>>(mapCreator);
+
+    additive: AdditiveMap = new OneMap<string, OneMap<string, Map<string, string | boolean | number>>>(doubleMapCreator);
+    substractive: SubstractiveMap = new OneMap<string, OneMap<string, Map<string, string>>>(doubleMapCreator);
 
     toPackage (): Package {
         const pack = new Package();
-        pack.resolve = this.flatten(this.resolve);
-        pack.follow = this.flatten(this.follow);
-        pack.additive = this.unMap(this.additive);
-        pack.substractive = this.flatten(this.substractive);
+        pack.resolve = this.unmapResolveFollow(this.resolve);
+        pack.follow = this.unmapResolveFollow(this.follow);
+        pack.additive = this.unmapAdditive(this.additive);
+        pack.substractive = this.unmapSubstractive(this.substractive);
         return pack;
     }
 
-    flatten (map: Map<string, Map<string, string>>): { [key: string]: string[] } {
-        const newMap: { [key: string]: string[] } = {};
-        map.forEach((instances, type) => {
-            const array: string[] = [];
-            instances.forEach((_, instanceId) =>
-                array.push(instanceId));
-            newMap[type] = array;
-        });
-        return newMap;
+    unmapResolveFollow (map2: Map2<string>): Obj1<string[]> {
+        return unMap<Map1<string>, string[]>(map2, (map1: Map1<string>) =>
+            flatten<string, string>(map1, id));
     }
 
-    unMap (map: Map<string, Map<string, string>>): { [key: string]: { [key: string]: string } } {
-        const newMap: { [key: string]: { [key: string]: string } } = {};
-        map.forEach((instances, type) => {
-            const subMap: { [key: string]: string } = {};
-            instances.forEach((instance, instanceId) =>
-                subMap[instanceId] = instance);
-            newMap[type] = subMap;
-        });
-        return newMap;
+    unmapAdditive (map3: Map3<JSONValType>): Obj3<JSONValType> {
+        return unMap<Map2<JSONValType>, Obj2<JSONValType>>(map3, (map2: Map2<JSONValType>) =>
+            unMap<Map1<JSONValType>, Obj1<JSONValType>>(map2, (map1: Map1<JSONValType>) =>
+                unMap<JSONValType, JSONValType>(map1, id)));
     }
+
+    unmapSubstractive (map3: Map3<string>): Obj2<string[]> {
+        return unMap<Map2<string>, Obj1<string[]>>(map3, (map2: Map2<string>) =>
+            unMap<Map1<string>, string[]>(map2, (map1: Map1<string>) =>
+                flatten<string, string>(map1, id)));
+    }
+
 
     empty (): boolean {
         return this.resolve.size + this.additive.size + this.substractive.size === 0;

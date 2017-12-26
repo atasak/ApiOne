@@ -1,16 +1,19 @@
+import {JSONValType, Map1} from '../../../dist/runtime/syncsystem/package';
 import {Package} from './package';
 import {PackageType} from './packagecollector';
 
 export interface IHubNode {
     sync (pack: Package, packageType: PackageType, receiver: string): void;
 
-    resolve(type: string, id: string): void;
+    resolve (type: string, id: string, channel?: string, follow?: string[]): void;
 
-    additiveBroadcast(type: string, id: string, json: string, channel?: string): void;
+    addObj (type: string, id: string, data: Map1<JSONValType>, channel?: string): void;
 
-    substractiveBroadcast (type: string, id: string, channel?: string): void;
+    addField (type: string, id: string, field: string, data: JSONValType, channel?: string): void;
 
-    sendPackage(channel: string, packageType: PackageType, receiver: string): void;
+    deleteKey (type: string, id: string, field: string, channel?: string): void;
+
+    sendPackage (channel: string, packageType: PackageType, receiver?: string): void;
 }
 
 export interface IHubConnection {

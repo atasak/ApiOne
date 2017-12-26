@@ -1,7 +1,13 @@
+import {TContentHub} from './contenthub';
 import {TContentPort} from './contentport';
+import {JSONValType, Map1} from './package';
+import {PackageType} from './packagecollector';
 
 export class TContentManager<TEntry> {
     private _content = new Map<string, Map<string, any>>();
+
+    constructor (private hub: TContentHub<TEntry>) {
+    }
 
     private _entry: TEntry;
 
@@ -21,7 +27,27 @@ export class TContentManager<TEntry> {
             return objectsOfType.get(id);
     }
 
-    getNewContentPort (): TContentPort<TEntry> {
-        return new TContentPort(this);
+    getNewContentPort (channel?: string): TContentPort<TEntry> {
+        return new TContentPort(this, channel);
+    }
+
+    resolve (type: string, id: string, channel?: string, follow?: string[]) {
+        this.hub.resolve(type, id, channel, follow);
+    }
+
+    addObj (type: string, id: string, data: Map1<JSONValType>, channel?: string) {
+        this.hub.addObj(type, id, data, channel);
+    }
+
+    addField (type: string, id: string, field: string, data: JSONValType, channel?: string) {
+        this.hub.addField(type, id, field, data, channel);
+    }
+
+    deleteKey (type: string, id: string, field: string, channel?: string) {
+        this.hub.deleteKey(type, id, field, channel);
+    }
+
+    sendPackage (channel: string, packageType: PackageType, receiver?: string) {
+        this.hub.sendPackage(channel, packageType, receiver);
     }
 }
