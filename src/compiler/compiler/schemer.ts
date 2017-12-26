@@ -58,7 +58,7 @@ export class Schemer {
 
     addImports () {
         for (const source of this.genDir.getSourceFiles())
-            source.addImport({
+            source.addImportDeclaration({
                 namedImports: [
                     {name: 'ClassWrapper'},
                     {name: 'ListWrapper'},
