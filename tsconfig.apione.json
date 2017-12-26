@@ -11,17 +11,16 @@
       "es2015.promise",
       "es2015.proxy"
     ],
-    "outDir": "spec/dist",
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
       "apiwrapper": [
-        "dist/runtime/contentwrappers"
+        "dist/runtime/syncsystem/contentwrappers"
       ]
     }
   },
   "include": [
-    "spec/common"
+    "spec/common/src"
   ],
   "exclude": [
     "node_modules",

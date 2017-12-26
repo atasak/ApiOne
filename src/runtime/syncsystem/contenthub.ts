@@ -8,7 +8,7 @@ export class TContentHub<T> extends PackageCollector implements IHubNode {
     server: IHubConnection | null = null;
     peers: IHubConnection[] = [];
 
-    contentManager = new TContentManager<T>();
+    contentManager = new TContentManager<T>(this);
 
     constructor () {
         super((pack, packageType, receiver) => this.send(pack, packageType, receiver));
