@@ -15,8 +15,9 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "if exist dist\\ rd /s /q dist && tsc",
-    "build:linux": "rm -rf dist && tsc",
+    "build": "tsc",
+    "build: windows": "if exist dist\\ rd /s /q dist && npm run build",
+    "build:linux": "rm -rf dist && npm run build",
     "build:travis": "tsc",
     "run": "node dist/compiler/runner.js",
     "test": "jasmine-ts",

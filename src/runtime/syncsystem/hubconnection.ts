@@ -1,5 +1,4 @@
-import {JSONValType, Map1} from '../../../dist/runtime/syncsystem/package';
-import {Package} from './package';
+import {JSONValType, Map1, Package} from './package';
 import {PackageType} from './packagecollector';
 
 export interface IHubNode {
