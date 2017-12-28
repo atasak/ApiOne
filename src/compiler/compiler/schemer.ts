@@ -82,17 +82,17 @@ export class Schemer {
         });
     }
 
-    emit () {
-        this.ast.forgetNodesCreatedInBlock(() => {
+    async emit () {
+        await this.ast.forgetNodesCreatedInBlock(async () => {
             if (!this.config.silent)
                 console.log('Emitting generated code...');
-            this.genDir.emitSync(this.getEmitConfig()).getOutputFilePaths();
+            await this.genDir.emit(this.getEmitConfig());
         });
     }
 
-    gen () {
-        this.ast.forgetNodesCreatedInBlock(() => {
-            this.genDir.saveUnsavedSourceFilesSync();
+    async gen () {
+        await this.ast.forgetNodesCreatedInBlock(async () => {
+            await this.genDir.saveUnsavedSourceFiles();
         });
     }
 

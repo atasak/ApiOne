@@ -38,18 +38,23 @@ export class ApiOneCompiler {
         Object.assign(this.config, config);
     }
 
-    run () {
+    async run () {
         if (!this.config.silent)
             console.log('Embedding ApiOne...');
         this.schemer = new Schemer(this.config);
         this.classMap = this.schemer.run();
 
+        let gen = Promise.resolve();
+        let emit = Promise.resolve();
+
         if (this.config.printDatastructures)
             this.print();
         if (this.config.emitTypescript !== '')
-            this.schemer.gen();
+            gen = this.schemer.gen();
         if (this.config.emitJavascript !== '' || this.config.emitDeclaration !== '')
-            this.schemer.emit();
+            emit = this.schemer.emit();
+
+        await Promise.all([gen, emit]);
         if (!this.config.silent)
             this.schemer.diagnose();
     }
