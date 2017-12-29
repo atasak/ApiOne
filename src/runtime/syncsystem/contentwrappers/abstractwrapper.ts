@@ -1,4 +1,5 @@
 import {IContentPort} from '../contentport';
+import {IContentManager} from '../contentmanager';
 
 export enum Resolved {Unresolved, Pending, Resolved};
 
@@ -19,7 +20,7 @@ export class InstanceInfo {
 export abstract class AbstractWrapper<TModel> {
     model: TModel;
 
-    constructor (protected port: IContentPort, protected parent: ParentInfo) {
+    constructor (protected port: IContentManager, protected parent: ParentInfo) {
         this.model = this.defaultModel;
     }
 
