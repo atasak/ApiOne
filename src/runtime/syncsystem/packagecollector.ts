@@ -1,9 +1,6 @@
 import {flatten, OneMap, unMap} from '../../util/onemap';
-import {id} from '../../util/utils';
-import {
-    AdditiveMap, FollowMap, JSONValType, Map1, Map2, Map3, Obj1, Obj2, Obj3, Package, ResolveMap,
-    SubstractiveMap,
-} from './package';
+import {ID} from '../../util/utils';
+import {AdditiveMap, FollowMap, Map1, Map2, Map3, Obj1, Obj2, Obj3, Package, Primitive, ResolveMap, SubstractiveMap,} from './package';
 import Timer = NodeJS.Timer;
 
 export type PackageType = 'resolve' | 'broadcast';
@@ -14,10 +11,10 @@ export class PackageCollector {
     private channels = new OneMap<string, CollectingPackage>(() => new CollectingPackage());
     private timeout: Timer | null = null;
 
-    constructor (private callback: (pack: Package, type: PackageType, receiver?: string) => void) {
+    constructor(private callback: (pack: Package, type: PackageType, receiver?: string) => void) {
     }
 
-    resolve (type: string, id: string, channel?: string, follow: string[] = []) {
+    resolve(type: string, id: string, channel?: string, follow: string[] = []) {
         this.getCollector('resolve', channel)
             .resolve
             .getOrCreate(type)
@@ -32,7 +29,7 @@ export class PackageCollector {
         this.setTimeout(channel);
     }
 
-    addObj (type: string, id: string, data: Map1<JSONValType>, channel?: string) {
+    addObj(type: string, id: string, data: Map1<Primitive>, channel?: string) {
         this.getCollector('broadcast', channel)
             .additive
             .getOrCreate(type)
@@ -41,7 +38,7 @@ export class PackageCollector {
         this.setTimeout(channel);
     }
 
-    addField (type: string, id: string, field: string, data: JSONValType, channel?: string) {
+    addField(type: string, id: string, field: string, data: Primitive, channel?: string) {
         this.getCollector('broadcast', channel)
             .additive
             .getOrCreate(type)
@@ -51,7 +48,7 @@ export class PackageCollector {
         this.setTimeout(channel);
     }
 
-    deleteKey (type: string, id: string, field: string, channel?: string) {
+    deleteKey(type: string, id: string, field: string, channel?: string) {
         this.getCollector('broadcast', channel)
             .substractive
             .getOrCreate(type)
@@ -61,7 +58,7 @@ export class PackageCollector {
         this.setTimeout(channel);
     }
 
-    sendPackage (channel: string, packageType: PackageType, receiver?: string) {
+    sendPackage(channel: string, packageType: PackageType, receiver?: string) {
         const channelCollector = this.channels.get(channel);
         if (channelCollector != null && !channelCollector.empty()) {
             this.callback(channelCollector.toPackage(), packageType, receiver);
@@ -69,7 +66,7 @@ export class PackageCollector {
         }
     }
 
-    private getCollector (pack: PackageType, channel?: string): CollectingPackage {
+    private getCollector(pack: PackageType, channel?: string): CollectingPackage {
         let collect: CollectingPackage;
         if (channel != null)
             collect = this.channels.getOrCreate(channel);
@@ -81,7 +78,7 @@ export class PackageCollector {
         return collect;
     }
 
-    private setTimeout (channel?: string) {
+    private setTimeout(channel?: string) {
         if (channel == null && this.timeout == null)
             this.timeout = setTimeout(() => {
                 if (!this.resolvePackage.empty())
@@ -94,11 +91,11 @@ export class PackageCollector {
     }
 }
 
-function mapCreator (): Map<string, string> {
+function mapCreator(): Map<string, string> {
     return new Map<string, string>();
 }
 
-function doubleMapCreator (): OneMap<string, Map<string, string>> {
+function doubleMapCreator(): OneMap<string, Map<string, string>> {
     return new OneMap<string, Map<string, string>>(mapCreator);
 }
 
@@ -109,7 +106,7 @@ class CollectingPackage {
     additive: AdditiveMap = new OneMap<string, OneMap<string, Map<string, string | boolean | number>>>(doubleMapCreator);
     substractive: SubstractiveMap = new OneMap<string, OneMap<string, Map<string, string>>>(doubleMapCreator);
 
-    toPackage (): Package {
+    toPackage(): Package {
         const pack = new Package();
         pack.resolve = this.unmapResolveFollow(this.resolve);
         pack.follow = this.unmapResolveFollow(this.follow);
@@ -118,25 +115,25 @@ class CollectingPackage {
         return pack;
     }
 
-    unmapResolveFollow (map2: Map2<string>): Obj1<string[]> {
+    unmapResolveFollow(map2: Map2<string>): Obj1<string[]> {
         return unMap<Map1<string>, string[]>(map2, (map1: Map1<string>) =>
-            flatten<string, string>(map1, id));
+            flatten<string, string>(map1, ID));
     }
 
-    unmapAdditive (map3: Map3<JSONValType>): Obj3<JSONValType> {
-        return unMap<Map2<JSONValType>, Obj2<JSONValType>>(map3, (map2: Map2<JSONValType>) =>
-            unMap<Map1<JSONValType>, Obj1<JSONValType>>(map2, (map1: Map1<JSONValType>) =>
-                unMap<JSONValType, JSONValType>(map1, id)));
+    unmapAdditive(map3: Map3<Primitive>): Obj3<Primitive> {
+        return unMap<Map2<Primitive>, Obj2<Primitive>>(map3, (map2: Map2<Primitive>) =>
+            unMap<Map1<Primitive>, Obj1<Primitive>>(map2, (map1: Map1<Primitive>) =>
+                unMap<Primitive, Primitive>(map1, ID)));
     }
 
-    unmapSubstractive (map3: Map3<string>): Obj2<string[]> {
+    unmapSubstractive(map3: Map3<string>): Obj2<string[]> {
         return unMap<Map2<string>, Obj1<string[]>>(map3, (map2: Map2<string>) =>
             unMap<Map1<string>, string[]>(map2, (map1: Map1<string>) =>
-                flatten<string, string>(map1, id)));
+                flatten<string, string>(map1, ID)));
     }
 
 
-    empty (): boolean {
+    empty(): boolean {
         return this.resolve.size + this.additive.size + this.substractive.size === 0;
     }
 }

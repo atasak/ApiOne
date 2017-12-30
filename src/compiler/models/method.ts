@@ -12,32 +12,33 @@ export class Method extends ClassElement {
     returnType: Type;
 
     constructor (protected schemer: Schemer, methodNode: MethodDeclaration | ConstructorDeclaration) {
-        super ();
-        this.extractGenericInfo (methodNode);
-        this.extractArguments (methodNode);
+        super();
+        this.extractGenericInfo(methodNode);
+        this.extractArguments(methodNode);
     }
 
     asString (): string {
-        const params = enumerate (this.parameters, p => `${p.typeAsString ()}, `);
+        const params = enumerate(this.parameters, p => `${p.typeAsString()}, `);
         return `${this.name}: (${params}) => ${this.returnType.typeAsString}`;
     }
 
     transform (classNode: ClassDeclaration) {
-        stub (classNode);
+        stub(classNode);
     }
 
     private extractGenericInfo (methodNode: MethodDeclaration | ConstructorDeclaration) {
-        const symbol = methodNode.getSymbol ();
+        const symbol = methodNode.getSymbol();
         if (symbol == null)
-            throw new Error ();
-        this.name = symbol.getName ();
+        // TODO: Create more specific error when symbol of method does not exist
+            throw new Error();
+        this.name = symbol.getName();
     }
 
     private extractArguments (methodNode: MethodDeclaration | ConstructorDeclaration) {
-        const parameterNodes = methodNode.getParameters ();
+        const parameterNodes = methodNode.getParameters();
         for (const parameterNode of parameterNodes)
-            this.parameters.push (new Parameter (this.schemer, parameterNode));
-        this.returnType = getTypeInfo (this.schemer, methodNode.getReturnType ());
+            this.parameters.push(new Parameter(this.schemer, parameterNode));
+        this.returnType = getTypeInfo(this.schemer, methodNode.getReturnType());
     }
 }
 
@@ -46,7 +47,7 @@ export class Parameter {
     type: Type;
 
     constructor (private schemer: Schemer, parameterNode: ParameterDeclaration) {
-        this.getNameAndType (parameterNode);
+        this.getNameAndType(parameterNode);
     }
 
     typeAsString (): string {
@@ -54,10 +55,11 @@ export class Parameter {
     }
 
     private getNameAndType (parameterNode: ParameterDeclaration) {
-        const symbol = parameterNode.getSymbol ();
+        const symbol = parameterNode.getSymbol();
         if (symbol == null)
-            throw new Error ();
-        this.name = symbol.getName ();
-        this.type = getTypeInfo (this.schemer, parameterNode.getType ());
+        // TODO: Create more specific error when symbol of parameter does not exist
+            throw new Error();
+        this.name = symbol.getName();
+        this.type = getTypeInfo(this.schemer, parameterNode.getType());
     }
 }

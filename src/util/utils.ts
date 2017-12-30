@@ -1,6 +1,6 @@
-export function noop () {
+export function noop() {
 }
 
-export function id<T> (t: T): T {
+export function ID<T>(t: T): T {
     return t;
 }

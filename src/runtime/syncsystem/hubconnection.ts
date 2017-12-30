@@ -1,4 +1,4 @@
-import {JSONValType, Map1, Package} from './package';
+import {Map1, Package, Primitive} from './package';
 import {PackageType} from './packagecollector';
 
 export interface IHubNode {
@@ -6,9 +6,9 @@ export interface IHubNode {
 
     resolve (type: string, id: string, channel?: string, follow?: string[]): void;
 
-    addObj (type: string, id: string, data: Map1<JSONValType>, channel?: string): void;
+    addObj (type: string, id: string, data: Map1<Primitive>, channel?: string): void;
 
-    addField (type: string, id: string, field: string, data: JSONValType, channel?: string): void;
+    addField (type: string, id: string, field: string, data: Primitive, channel?: string): void;
 
     deleteKey (type: string, id: string, field: string, channel?: string): void;
 

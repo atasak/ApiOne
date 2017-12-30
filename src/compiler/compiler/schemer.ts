@@ -40,6 +40,7 @@ export class Schemer {
         for (const classNode of source.getClasses()) {
             const symbol = classNode.getSymbol();
             if (symbol == null)
+            // TODO: Create more specific error when symbol of class does not exist
                 throw new Error();
 
             const fullName = getRelativeFullName(this, symbol);

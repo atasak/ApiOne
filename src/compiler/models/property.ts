@@ -13,11 +13,21 @@ export class Property extends ClassElement {
     type: Type;
 
     constructor (protected schemer: Schemer, propertyNode: PropertyDeclaration) {
-        super ();
-        this.extractGenericInfo (propertyNode);
-        this.extractTypeInfo (propertyNode);
-        this.extractDefaultValue (propertyNode);
-        propertyNode.remove ();
+        super();
+        this.extractGenericInfo(propertyNode);
+        this.extractTypeInfo(propertyNode);
+        this.extractDefaultValue(propertyNode);
+        propertyNode.remove();
+    }
+
+    private get insertableCode (): ClassElementStructure[] {
+        return [
+            this.valueManager(),
+            this.getAccessor('', '_'),
+            this.getAccessor('_', '_'),
+            this.getAccessor('$', '$', true),
+            this.setAccessor(),
+        ];
     }
 
     asString (): string {
@@ -25,19 +35,9 @@ export class Property extends ClassElement {
     }
 
     transform (classNode: ClassDeclaration) {
-        this.insertableCode.forEach (
-            struct => struct.addToClass (classNode),
+        this.insertableCode.forEach(
+            struct => struct.addToClass(classNode),
         );
-    }
-
-    private get insertableCode (): ClassElementStructure[] {
-        return [
-            this.valueManager (),
-            this.getAccessor ('', '_'),
-            this.getAccessor ('_', '_'),
-            this.getAccessor ('$', '$', true),
-            this.setAccessor (),
-        ];
     }
 
     private valueManager (): ClassElementStructure {
@@ -48,7 +48,7 @@ export class Property extends ClassElement {
             type: type,
             initializer: `new ${type}()`,
         };
-        return new ClassElementStructure (ClassElementType.Var, propertyStructure);
+        return new ClassElementStructure(ClassElementType.Var, propertyStructure);
     }
 
     private getAccessor (makeSign: string, useSign: string, promiseReturn = false): ClassElementStructure {
@@ -62,7 +62,7 @@ export class Property extends ClassElement {
             returnType: returnType,
             bodyText: `return this.${this.oneName}.${useSign}get()`,
         };
-        return new ClassElementStructure (ClassElementType.Get, getterStructure);
+        return new ClassElementStructure(ClassElementType.Get, getterStructure);
     }
 
     private setAccessor (): ClassElementStructure {
@@ -75,24 +75,25 @@ export class Property extends ClassElement {
             }],
             bodyText: `this.${this.oneName}.set(${this.name});`,
         };
-        return new ClassElementStructure (ClassElementType.Set, setterStructure);
+        return new ClassElementStructure(ClassElementType.Set, setterStructure);
     }
 
     private extractGenericInfo (propertyNode: PropertyDeclaration) {
-        const symbol = propertyNode.getSymbol ();
+        const symbol = propertyNode.getSymbol();
         if (symbol == null)
-            throw new Error ();
-        this.name = symbol.getName ();
+        // TODO: Create more specific error when symbol of property does not exist
+            throw new Error();
+        this.name = symbol.getName();
     }
 
     private extractTypeInfo (propertyNode: PropertyDeclaration) {
-        this.type = getTypeInfo (this.schemer, propertyNode.getType ());
+        this.type = getTypeInfo(this.schemer, propertyNode.getType());
     }
 
     private extractDefaultValue (propertyNode: PropertyDeclaration) {
-        const initializer = propertyNode.getInitializer ();
+        const initializer = propertyNode.getInitializer();
         if (initializer)
-            this.defaultValue = initializer.getText ();
+            this.defaultValue = initializer.getText();
     }
 }
 
