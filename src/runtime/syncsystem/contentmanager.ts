@@ -6,9 +6,7 @@ import {Map1, Primitive} from './package';
 import {PackageType} from './packagecollector';
 
 export interface IContentManager {
-    getObjectsByType<T> (type: string): Map<string, T> | undefined;
-
-    getObjectById<T> (type: string, id: string): T | undefined;
+    getWrapperById<T extends AbstractWrapper<T>> (type: string, id: string): T;
 
     resolve (type: string, id: string, channel?: string, follow?: string[]): void;
 
@@ -26,27 +24,25 @@ export interface ContentManager<TEntry> {
 }
 
 export class TContentManager<TEntry> implements IContentManager, ContentManager<TEntry> {
-    private content = new Map<string, Map<string, any>>();
+    private data: OneMap<string, Map<string, any>>;
     private wrappers: OneMap<string, OneMap<string, AbstractWrapper<any>>>;
 
-    constructor (private hub: TContentHub<TEntry>, private _entry: TEntry, private typeFactories: Map<string, () => AbstractWrapper<any>>) {
+    constructor (private hub: TContentHub<TEntry>, private _entry: TEntry,
+                 private typeFactories: Map<string, (manager: IContentManager, id: string) => AbstractWrapper<any>>) {
         this.createWrapperOneMap();
+        this.createDataOneMap();
     }
 
     entry (): TEntry {
         return this._entry;
     }
 
-    getWrappersByType<T> (type: string): Map<string, T> | undefined {
-        return this.content.get(type) as Map<string, T> | undefined;
+    getWrappersByType<T extends AbstractWrapper<T>> (type: string): OneMap<string, T> {
+        return this.data.getOrCreate(type) as OneMap<string, T>;
     }
 
-    getObjectById<T> (type: string, id: string): T | undefined {
-        const objectsOfType = this.getObjectsByType<T>(type);
-        if (objectsOfType === undefined)
-            return undefined;
-        else
-            return objectsOfType.get(id);
+    getWrapperById<T extends AbstractWrapper<T>> (type: string, id: string): T {
+        return this.wrappers.getOrCreate(type).getOrCreate(id) as T;
     }
 
     getNewContentPort (): TContentPort<TEntry> {
@@ -74,13 +70,18 @@ export class TContentManager<TEntry> implements IContentManager, ContentManager<
     }
 
     private createWrapperOneMap () {
-        this.wrappers = new OneMap<string, OneMap<string, AbstractWrapper<any>>>(t =>
-            new OneMap<string, AbstractWrapper<any>>(() => {
-                const factory = this.typeFactories.get(t);
-                if (factory != null)
-                    return factory();
+        this.wrappers = new OneMap<string, OneMap<string, AbstractWrapper<any>>>(type =>
+            new OneMap<string, AbstractWrapper<any>>(id => {
+                const factory = this.typeFactories.get(type);
+                if (factory == null)
                 // TODO: Create more specific error when used type does not exist
-                throw new Error();
+                    throw new Error();
+                return factory(this, id);
             }));
+    }
+
+    private createDataOneMap () {
+        this.data = new OneMap<string, OneMap<string, any>>(() => new OneMap<string, any>(() => {
+        }));
     }
 }

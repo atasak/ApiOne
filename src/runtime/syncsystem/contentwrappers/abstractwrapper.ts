@@ -17,13 +17,17 @@ export class InstanceInfo {
 }
 
 export abstract class AbstractWrapper<TModel> {
-    model: TModel;
+    private readonly _model: TModel;
 
-    constructor(protected port: IContentManager, protected parent: ParentInfo) {
-        this.model = this.defaultModel;
+    constructor (protected manager: IContentManager) {
+        this._model = model || this.defaultModel;
     }
 
-    abstract get defaultModel(): TModel;
+    get model (): TModel {
+        return this._model;
+    }
+
+    protected abstract get defaultModel (): TModel;
 }
 
 export abstract class ResolvableWrapper<TModel, THandler extends TModel & { isHandler: boolean }> extends AbstractWrapper<TModel> {
@@ -31,17 +35,16 @@ export abstract class ResolvableWrapper<TModel, THandler extends TModel & { isHa
     private handler: THandler;
     private promise: Promise<THandler>;
 
-    constructor(port: IContentManager,
-                parent: ParentInfo,
-                private instance: InstanceInfo) {
-        super(port, parent);
+    constructor (manager: IContentManager,
+                 private instance: InstanceInfo) {
+        super(manager);
     }
 
-    get status(): Resolved {
+    get status (): Resolved {
         return this.resolved;
     }
 
-    async $get(): Promise<THandler> {
+    async $get (): Promise<THandler> {
         if (this.resolved !== Resolved.Unresolved)
             return this.promise;
 
@@ -52,12 +55,12 @@ export abstract class ResolvableWrapper<TModel, THandler extends TModel & { isHa
         });
     }
 
-    _get(): THandler {
+    _get (): THandler {
         this.$get();
         return this.handler;
     }
 
-    set(model: THandler | Partial<TModel>): THandler {
+    set (model: THandler | Partial<TModel>): THandler {
         if (this.resolved === Resolved.Unresolved)
             this.handler = this.createHandler();
         this.resolved = Resolved.Resolved;
@@ -68,9 +71,9 @@ export abstract class ResolvableWrapper<TModel, THandler extends TModel & { isHa
             this.setFromModel();
     }
 
-    abstract createHandler(): THandler;
+    abstract createHandler (): THandler;
 
-    async resolve(): Promise<THandler> {
+    async resolve (): Promise<THandler> {
         if (this.resolved === Resolved.Resolved)
             return this.handler;
         const data = await this.port.resolve<TModel>(this.instance.type, this.instance.id);
@@ -84,10 +87,9 @@ export abstract class ResolvableWrapper<TModel, THandler extends TModel & { isHa
 
 export abstract class ProxyWrapper<TModel, TChild> extends ResolvableWrapper<TModel> {
 
-    constructor(port: IContentManager,
-                parent: ParentInfo,
-                instance: InstanceInfo,
-                private childWrapperCreator: () => TChild) {
+    constructor (port: IContentManager,
+                 instance: InstanceInfo,
+                 private childWrapperCreator: () => TChild) {
         super(port, parent, instance);
     }
 }
