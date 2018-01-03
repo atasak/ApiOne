@@ -1,49 +1,84 @@
-/*import {SyncPromise} from './syncpromise';
+import {IteratorMap} from './iterator';
+import {OneMap} from './onemap';
 import {Printable} from './printable';
+import {SyncPromise} from './syncpromise';
 
-export class PromiseMap<T> {
-    private map: { [type: string]: PromiseWrapper<T> } = {};
+export class PromiseMap<K, V> implements Map<K, V> {
+    [Symbol.iterator] = this.entries;
+    private map: OneMap<K, PromiseWrapper<V>>;
+    [Symbol.toStringTag] = this.map[Symbol.toStringTag];
 
-    insert(key: string, value: T) {
-        this.getNullChecked(key).resolve(value);
+    constructor () {
+        this.map = new OneMap<K, PromiseWrapper<V>>(() => new PromiseWrapper<V>());
     }
 
-    get(key: string): Promise<T> {
-        return this.getNullChecked(key).promise;
+    get size () {
+        return this.map.size;
+    };
+
+    clear (): void {
+        this.map.clear();
     }
 
-    has(key: string): boolean {
-        return this.map[key] != null;
+    delete (key: K): boolean {
+        return this.map.delete(key);
     }
 
-    directGet(key: string): T {
-        return this.map[key].value;
+    forEach (callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: any): void {
+        this.map.forEach((value, key) => value.value == null || callbackfn(value.value, key, this), thisArg);
     }
 
-    finalize() {
-        for (const key in this.map) {
-            if (this.map[key].value === null)
-                this.map[key].reject('Key not set');
+    set (key: K, value: V): this {
+        this.map.getOrCreate(key).resolve(value);
+        return this;
+    }
+
+    entries (): IterableIterator<[K, V]> {
+        return new IteratorMap<[K, PromiseWrapper<V>], [K, V]>(
+            this.map.entries(), (entry: [K, PromiseWrapper<V>]) => {
+                const value = entry[1].value;
+                if (value == null)
+                    return null;
+                return [entry[0], value];
+            });
+    }
+
+    keys (): IterableIterator<K> {
+        return this.map.keys();
+    }
+
+    values (): IterableIterator<V> {
+        return new IteratorMap<PromiseWrapper<V>, V>(this.map.values(), v => v.value);
+    }
+
+    get (key: K): V | undefined {
+        return this.map.getOrCreate(key).value || undefined;
+    }
+
+    promise (key: K): Promise<V> {
+        return this.map.getOrCreate(key).promise;
+    }
+
+    has (key: K): boolean {
+        return this.map.has(key);
+    }
+
+    finalize () {
+        for (const key of this.map.keys()) {
+            if (this.map.getOrCreate(key).value === null)
+                this.map.getOrCreate(key).reject('Key never resolved...');
         }
     }
 
-    log() {
-        for (const key in this.map) {
-            if (this.map.hasOwnProperty(key)) {
-                console.log(`${key}: `);
-                const value = this.map[key].value;
-                if (value['asString'] != null)
-                    console.log((value as any as Printable).asString());
-                else
-                    console.log(value);
-            }
+    log () {
+        for (const key of this.map.keys()) {
+            console.log(`${key}: `);
+            const value = this.map.getOrCreate(key).value;
+            if ((value as { [key: string]: any })['asString'] != null)
+                console.log((value as any as Printable).asString());
+            else
+                console.log(value);
         }
-    }
-
-    private getNullChecked(key: string): PromiseWrapper<T> {
-        if (this.map[key] == null)
-            this.map[key] = new PromiseWrapper<T>();
-        return this.map[key];
     }
 }
 
@@ -51,15 +86,14 @@ class PromiseWrapper<T> {
     promise: Promise<T>;
     resolve: (value: T) => void;
     reject: (reason: any) => void;
-    value: T = null;
+    value: T | null = null;
 
-    constructor() {
+    constructor () {
         this.promise = new SyncPromise<T>((resolve, reject) => {
             this.resolve = resolve;
             this.reject = reject;
         });
-        this.promise.then((value) =>
-            this.value = value);
+        this.promise.then((val) =>
+            this.value = val);
     }
 }
-*/

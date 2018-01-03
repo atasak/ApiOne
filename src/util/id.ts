@@ -1,4 +1,8 @@
-export class ApiIds {
+import {CombinedIteratorIntersect} from './iterator';
+import {PromiseMap} from './promisemap';
+import {SyncPromise} from './syncpromise';
+
+export class IdFactory {
     private characters = ['-', '_'];
     private ids: { [key: string]: boolean } = {
         '00000000': true,
@@ -46,4 +50,45 @@ export class ApiIds {
             return this.characters[Math.floor(Math.random() * 63 + 1)];
         return mask;
     }
+}
+
+export class ResolvableIdFactory {
+    private idFactory: IdFactory;
+    private promises = new PromiseMap<string, [string, string]>();
+
+    constructor (mask: string) {
+        this.idFactory = new IdFactory(mask);
+    }
+
+    id (): ResolvableId {
+        const tempId = this.idFactory.id();
+        const promise = this.promises.promise(tempId);
+        return new ResolvingId(tempId, promise);
+    }
+
+    resolveIds (ids: string[]) {
+        const resolvedKeys: string[] = [];
+        for (const keypair of new CombinedIteratorIntersect<string, string>(this.promises.keys(), ids[Symbol.iterator]())) {
+            resolvedKeys.push(keypair[0]);
+            this.promises.set(keypair[0], [keypair[0], keypair[1]]);
+        }
+        for (const key of resolvedKeys)
+            this.promises.delete(key);
+    }
+}
+
+export class ResolvingId implements ResolvableId {
+    constructor (private _id: string,
+                 public readonly promise: Promise<[string, string]> = SyncPromise.Resolve<[string, string]>([_id, _id])) {
+        this.promise.then(ids => this._id = ids[1]);
+    }
+
+    get id () {
+        return this._id;
+    }
+}
+
+export interface ResolvableId {
+    readonly id: string
+    readonly promise: Promise<[string, string]>
 }

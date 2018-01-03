@@ -1,4 +1,3 @@
 export * from './contentwrappers';
-
-export {ContentPort} from './contentport';
-export {ContentManager} from './contentmanager';
+export * from './interfaces';
+export {Package} from './package';

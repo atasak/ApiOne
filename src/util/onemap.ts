@@ -1,12 +1,12 @@
 export class OneMap<I, T> extends Map<I, T> {
-    constructor (private creator: (index: I) => T) {
+    constructor (private factory: (index: I) => T) {
         super();
     }
 
-    getOrCreate (index: I): T {
+    getOrCreate (index: I, factory?: (index: I) => T): T {
         let value = this.get(index);
         if (value == null) {
-            value = this.creator(index);
+            value = (factory ? factory : this.factory)(index);
             this.set(index, value);
         }
         return value;

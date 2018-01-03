@@ -1,6 +1,6 @@
 import {flatten, OneMap, unMap} from '../../util/onemap';
 import {ID} from '../../util/utils';
-import {AdditiveMap, FollowMap, Map1, Map2, Map3, Obj1, Obj2, Obj3, Package, Primitive, ResolveMap, SubstractiveMap,} from './package';
+import {AdditiveMap, FollowMap, Map1, Map2, Map3, Obj1, Obj2, Obj3, Package, Primitive, ResolveMap, SubstractiveMap} from './package';
 import Timer = NodeJS.Timer;
 
 export type PackageType = 'resolve' | 'broadcast';
@@ -11,54 +11,54 @@ export class PackageCollector {
     private channels = new OneMap<string, CollectingPackage>(() => new CollectingPackage());
     private timeout: Timer | null = null;
 
-    constructor(private callback: (pack: Package, type: PackageType, receiver?: string) => void) {
+    constructor (private callback: (pack: Package, type: PackageType, receiver?: string) => void) {
     }
 
-    resolve(type: string, id: string, channel?: string, follow: string[] = []) {
-        this.getCollector('resolve', channel)
+    resolve (type: string, id: string, follow: string[] = []) {
+        this.getCollector('resolve')
             .resolve
             .getOrCreate(type)
             .set(id, '');
 
         for (const f of follow)
-            this.getCollector('resolve', channel)
+            this.getCollector('resolve')
                 .follow
                 .getOrCreate(type)
                 .set(f, '');
 
-        this.setTimeout(channel);
+        this.setTimeout();
     }
 
-    addObj(type: string, id: string, data: Map1<Primitive>, channel?: string) {
-        this.getCollector('broadcast', channel)
+    addObj (type: string, id: string, data: Map1<Primitive>) {
+        this.getCollector('broadcast')
             .additive
             .getOrCreate(type)
             .set(id, data);
 
-        this.setTimeout(channel);
+        this.setTimeout();
     }
 
-    addField(type: string, id: string, field: string, data: Primitive, channel?: string) {
-        this.getCollector('broadcast', channel)
+    addField (type: string, id: string, field: string, data: Primitive) {
+        this.getCollector('broadcast')
             .additive
             .getOrCreate(type)
             .getOrCreate(id)
             .set(field, data);
 
-        this.setTimeout(channel);
+        this.setTimeout();
     }
 
-    deleteKey(type: string, id: string, field: string, channel?: string) {
-        this.getCollector('broadcast', channel)
+    deleteKey (type: string, id: string, field: string) {
+        this.getCollector('broadcast')
             .substractive
             .getOrCreate(type)
             .getOrCreate(id)
             .set(field, '');
 
-        this.setTimeout(channel);
+        this.setTimeout();
     }
 
-    sendPackage(channel: string, packageType: PackageType, receiver?: string) {
+    sendPackage (channel: string, packageType: PackageType, receiver?: string) {
         const channelCollector = this.channels.get(channel);
         if (channelCollector != null && !channelCollector.empty()) {
             this.callback(channelCollector.toPackage(), packageType, receiver);
@@ -66,20 +66,18 @@ export class PackageCollector {
         }
     }
 
-    private getCollector(pack: PackageType, channel?: string): CollectingPackage {
-        let collect: CollectingPackage;
-        if (channel != null)
-            collect = this.channels.getOrCreate(channel);
-        else
-            collect = {
-                resolve: this.resolvePackage,
-                broadcast: this.broadcastPackage,
-            }[pack];
-        return collect;
+    requestIds (ids: number) {
+        this.getCollector('resolve').requestIds += ids;
     }
 
-    private setTimeout(channel?: string) {
-        if (channel == null && this.timeout == null)
+    private getCollector (pack: PackageType): CollectingPackage {
+        if (pack === 'resolve')
+            return this.resolvePackage;
+        return this.broadcastPackage;
+    }
+
+    private setTimeout () {
+        if (this.timeout == null)
             this.timeout = setTimeout(() => {
                 if (!this.resolvePackage.empty())
                     this.callback(this.resolvePackage.toPackage(), 'resolve');
@@ -91,11 +89,11 @@ export class PackageCollector {
     }
 }
 
-function mapCreator(): Map<string, string> {
+function mapCreator (): Map<string, string> {
     return new Map<string, string>();
 }
 
-function doubleMapCreator(): OneMap<string, Map<string, string>> {
+function doubleMapCreator (): OneMap<string, Map<string, string>> {
     return new OneMap<string, Map<string, string>>(mapCreator);
 }
 
@@ -106,34 +104,36 @@ class CollectingPackage {
     additive: AdditiveMap = new OneMap<string, OneMap<string, Map<string, string | boolean | number>>>(doubleMapCreator);
     substractive: SubstractiveMap = new OneMap<string, OneMap<string, Map<string, string>>>(doubleMapCreator);
 
-    toPackage(): Package {
+    requestIds = 0;
+
+    toPackage (): Package {
         const pack = new Package();
         pack.resolve = this.unmapResolveFollow(this.resolve);
         pack.follow = this.unmapResolveFollow(this.follow);
         pack.additive = this.unmapAdditive(this.additive);
         pack.substractive = this.unmapSubstractive(this.substractive);
+        pack.requestIds = this.requestIds;
         return pack;
     }
 
-    unmapResolveFollow(map2: Map2<string>): Obj1<string[]> {
+    unmapResolveFollow (map2: Map2<string>): Obj1<string[]> {
         return unMap<Map1<string>, string[]>(map2, (map1: Map1<string>) =>
             flatten<string, string>(map1, ID));
     }
 
-    unmapAdditive(map3: Map3<Primitive>): Obj3<Primitive> {
+    unmapAdditive (map3: Map3<Primitive>): Obj3<Primitive> {
         return unMap<Map2<Primitive>, Obj2<Primitive>>(map3, (map2: Map2<Primitive>) =>
             unMap<Map1<Primitive>, Obj1<Primitive>>(map2, (map1: Map1<Primitive>) =>
                 unMap<Primitive, Primitive>(map1, ID)));
     }
 
-    unmapSubstractive(map3: Map3<string>): Obj2<string[]> {
+    unmapSubstractive (map3: Map3<string>): Obj2<string[]> {
         return unMap<Map2<string>, Obj1<string[]>>(map3, (map2: Map2<string>) =>
             unMap<Map1<string>, string[]>(map2, (map1: Map1<string>) =>
                 flatten<string, string>(map1, ID)));
     }
 
-
-    empty(): boolean {
+    empty (): boolean {
         return this.resolve.size + this.additive.size + this.substractive.size === 0;
     }
 }

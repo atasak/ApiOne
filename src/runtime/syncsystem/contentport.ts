@@ -1,8 +1,5 @@
 import {TContentManager} from './contentmanager';
-
-export interface ContentPort<TEntry> {
-    readonly entry: TEntry;
-}
+import {ContentPort} from './interfaces';
 
 export class TContentPort<TEntry> implements ContentPort<TEntry> {
     constructor (private manager: TContentManager<TEntry>) {

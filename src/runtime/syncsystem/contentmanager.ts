@@ -1,77 +1,109 @@
+import {ResolvableId, ResolvableIdFactory} from '../../util/id';
 import {OneMap} from '../../util/onemap';
+import {PromiseMap} from '../../util/promisemap';
 import {TContentHub} from './contenthub';
 import {TContentPort} from './contentport';
-import {AbstractWrapper} from './contentwrappers/abstractwrapper';
+import {ContentTransformer} from './contenttransformer';
+import {ResolvableWrapper} from './contentwrappers/abstractwrapper';
+import {ContentManager, ContentPort, FactoryMap, TypeReducer} from './interfaces';
+import {SystemSpecs} from './interfaces/systemspecs';
 import {Map1, Primitive} from './package';
-import {PackageType} from './packagecollector';
 
 export interface IContentManager {
-    getWrapperById<T extends AbstractWrapper<T>> (type: string, id: string): T;
+    getWrappersByType<T extends ResolvableWrapper<T>> (type: string): OneMap<string, T>;
 
-    resolve (type: string, id: string, channel?: string, follow?: string[]): void;
+    getWrapperById<T extends ResolvableWrapper<T>> (type: string, id: string): T;
 
-    addObj (type: string, id: string, data: Map1<Primitive>, channel?: string): void;
+    resolve<T> (type: string, id: string, follow?: string[]): Promise<ResolvableWrapper<T>>;
 
-    addField (type: string, id: string, field: string, data: Primitive, channel?: string): void;
+    addObj (type: string, id: string, data: Map1<Primitive>): void;
 
-    deleteKey (type: string, id: string, field: string, channel?: string): void;
+    addField (type: string, id: string, field: string, data: Primitive): void;
 
-    sendPackage (channel: string, packageType: PackageType, receiver?: string): void;
-}
+    deleteKey (type: string, id: string, field: string): void;
 
-export interface ContentManager<TEntry> {
-    getNewContentPort(): TContentPort<TEntry>;
+    hasWrapper (type: string, id: string): boolean;
+
+    resolveData(type: string, id: string, factory: () => any): any;
+
+    transformData (type: string, data: any): ResolvableId;
 }
 
 export class TContentManager<TEntry> implements IContentManager, ContentManager<TEntry> {
-    private data: OneMap<string, Map<string, any>>;
-    private wrappers: OneMap<string, OneMap<string, AbstractWrapper<any>>>;
+    private data: OneMap<string, OneMap<string, any>>;
+    private wrappers: OneMap<string, OneMap<string, ResolvableWrapper<any>>>;
+    private promises: OneMap<string, PromiseMap<string, ResolvableWrapper<any>>>;
+
+    private typeFactories: FactoryMap;
+    private typeReducer: TypeReducer;
+    private idFactory: ResolvableIdFactory;
+    private contentTransformer: ContentTransformer;
 
     constructor (private hub: TContentHub<TEntry>, private _entry: TEntry,
-                 private typeFactories: Map<string, (manager: IContentManager, id: string) => AbstractWrapper<any>>) {
+                 specs: SystemSpecs) {
         this.createWrapperOneMap();
-        this.createDataOneMap();
+        this.createDataAndPromiseMaps();
+
+        this.typeFactories = specs.typeFactories;
+        this.typeReducer = specs.typeReducer;
+        this.idFactory = new ResolvableIdFactory(specs.masks.temporary);
+        this.contentTransformer = new ContentTransformer(this, this.idFactory);
     }
 
-    entry (): TEntry {
+    get reduceType (): (type: string) => string {
+        return this.typeReducer;
+    }
+
+    get entry (): TEntry {
         return this._entry;
     }
 
-    getWrappersByType<T extends AbstractWrapper<T>> (type: string): OneMap<string, T> {
+    transformData (type: string, data: any): ResolvableId {
+        const ids = this.contentTransformer.transform(type, data);
+        this.hub.requestIds(ids.length);
+        return ids[0];
+    }
+
+    resolveData (type: string, id: string, factory: () => any): any {
+        return this.data.getOrCreate(type).getOrCreate(id, factory);
+    }
+
+    getWrappersByType<T extends ResolvableWrapper<T>> (type: string): OneMap<string, T> {
         return this.data.getOrCreate(type) as OneMap<string, T>;
     }
 
-    getWrapperById<T extends AbstractWrapper<T>> (type: string, id: string): T {
+    getWrapperById<T extends ResolvableWrapper<T>> (type: string, id: string): T {
         return this.wrappers.getOrCreate(type).getOrCreate(id) as T;
     }
 
-    getNewContentPort (): TContentPort<TEntry> {
+    getNewContentPort (): ContentPort<TEntry> {
         return new TContentPort(this);
     }
 
-    resolve<T> (type: string, id: string, channel?: string, follow?: string[]): Promise<T> {
-        this.hub.resolve(type, id, channel, follow);
+    hasWrapper (type: string, id: string): boolean {
+        return this.wrappers.getOrCreate(type).has(id);
     }
 
-    addObj (type: string, id: string, data: Map1<Primitive>, channel?: string) {
-        this.hub.addObj(type, id, data, channel);
+    resolve<T> (type: string, id: string, follow?: string[]): Promise<ResolvableWrapper<T>> {
+        this.hub.resolve(type, id, follow);
+        return this.promises.getOrCreate(type).promise(id);
     }
 
-    addField (type: string, id: string, field: string, data: Primitive, channel?: string) {
-        this.hub.addField(type, id, field, data, channel);
+    addObj (type: string, id: string, data: Map1<Primitive>) {
+        this.hub.addObj(type, id, data);
     }
 
-    deleteKey (type: string, id: string, field: string, channel?: string) {
-        this.hub.deleteKey(type, id, field, channel);
+    addField (type: string, id: string, field: string, data: Primitive) {
+        this.hub.addField(type, id, field, data);
     }
 
-    sendPackage (channel: string, packageType: PackageType, receiver?: string) {
-        this.hub.sendPackage(channel, packageType, receiver);
+    deleteKey (type: string, id: string, field: string) {
+        this.hub.deleteKey(type, id, field);
     }
 
     private createWrapperOneMap () {
-        this.wrappers = new OneMap<string, OneMap<string, AbstractWrapper<any>>>(type =>
-            new OneMap<string, AbstractWrapper<any>>(id => {
+        this.wrappers = new OneMap<string, OneMap<string, ResolvableWrapper<any>>>(type =>
+            new OneMap<string, ResolvableWrapper<any>>(id => {
                 const factory = this.typeFactories.get(type);
                 if (factory == null)
                 // TODO: Create more specific error when used type does not exist
@@ -80,8 +112,8 @@ export class TContentManager<TEntry> implements IContentManager, ContentManager<
             }));
     }
 
-    private createDataOneMap () {
-        this.data = new OneMap<string, OneMap<string, any>>(() => new OneMap<string, any>(() => {
-        }));
+    private createDataAndPromiseMaps () {
+        this.data = new OneMap<string, OneMap<string, any>>(() => new OneMap<string, any>(() => null));
+        this.promises = new OneMap<string, PromiseMap<string, any>>(() => new PromiseMap<string, any>());
     }
 }
