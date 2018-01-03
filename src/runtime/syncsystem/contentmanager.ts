@@ -10,6 +10,8 @@ import {SystemSpecs} from './interfaces/systemspecs';
 import {Map1, Primitive} from './package';
 
 export interface IContentManager {
+    readonly reduceType: TypeReducer;
+
     getWrappersByType<T extends ResolvableWrapper<T>> (type: string): OneMap<string, T>;
 
     getWrapperById<T extends ResolvableWrapper<T>> (type: string, id: string): T;
@@ -50,7 +52,7 @@ export class TContentManager<TEntry> implements IContentManager, ContentManager<
         this.contentTransformer = new ContentTransformer(this, this.idFactory);
     }
 
-    get reduceType (): (type: string) => string {
+    get reduceType (): TypeReducer {
         return this.typeReducer;
     }
 

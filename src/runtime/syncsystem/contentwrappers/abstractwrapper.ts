@@ -1,4 +1,5 @@
 import {ResolvableId} from '../../../util/id';
+import {OneMap} from '../../../util/onemap';
 import {PrimitiveType} from '../../typesystem/types';
 import {IContentManager} from '../contentmanager';
 import {Primitive} from '../package';
@@ -7,11 +8,11 @@ export enum Resolved {Unresolved, Pending, Resolved};
 
 export abstract class ResolvableWrapper<T extends { [key: string]: any } | Primitive> {
     public static IsWrapper = Symbol();
+    protected model: { [key: string]: ResolvableId | Primitive };
     private _status: Resolved = Resolved.Pending;
-    private model: { [key: string]: ResolvableId | Primitive };
     private promise: Promise<ResolvableWrapper<T>>;
 
-    constructor (protected manager: IContentManager, private type: string, private id: string) {
+    constructor (protected manager: IContentManager, protected readonly type: string, protected readonly id: string) {
         this.promise = this.manager.resolve<T>(type, id);
         this.promise.then(() => this._status = Resolved.Resolved);
 
@@ -62,8 +63,28 @@ export abstract class ResolvableWrapper<T extends { [key: string]: any } | Primi
 }
 
 export abstract class ProxyWrapper<T> extends ResolvableWrapper<T> {
+    private reducedType: string;
+    private reducedTypeMap: OneMap<string, ResolvableWrapper<T>>;
 
     constructor (manager: IContentManager, type: string, id: string) {
         super(manager, type, id);
+        this.reducedType = this.manager.reduceType(this.type);
+        this.reducedTypeMap = this.manager.getWrappersByType(this.reducedType);
+    }
+
+    getProxyHandler (method: '_' | '$') {
+        const handler: ProxyHandler<ProxyWrapper<T>> = {
+            get: (target, name) => (method === '_' ? target._get : target.$get)(name as string),
+            set: (target, name, value) => target.set(name as string, value),
+        };
+        return new Proxy(this, handler);
+    }
+
+    protected getTypeOf () {
+        return this.reducedType;
+    }
+
+    protected getWrapperOf<W extends ResolvableWrapper<any>> (field: number | string): W {
+        return this.reducedTypeMap.getOrCreate(this.model[field].id) as W;
     }
 }
