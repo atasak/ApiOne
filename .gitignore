@@ -14,3 +14,5 @@ npm-debug.log
 /spec/common/dist
 /spec/common/gen
 /**/*.js
+/.nyc_output/
+/coverage/
