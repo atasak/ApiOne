@@ -27,6 +27,7 @@
     "src",
     "apiwrapper",
     "dist",
-    "**/*.bak/*"
+    "**/*.bak/*",
+    "**/*.spec.ts"
   ]
 }

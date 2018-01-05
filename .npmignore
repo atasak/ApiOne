@@ -13,4 +13,5 @@ tslint.json
 
 # src and test
 /src
-/spec
+/.nyc_output
+/coverage

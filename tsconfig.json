@@ -36,6 +36,7 @@
     "node_modules",
     "dist",
     "spec",
-    "**/*.bak/*"
+    "**/*.bak/*",
+    "**/*.spec.ts"
   ]
 }

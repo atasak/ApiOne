@@ -20,12 +20,15 @@
     "build:linux": "rm -rf dist && npm run build",
     "build:travis": "tsc",
     "run": "node dist/compiler/runner.js",
-    "test": "nyc mocha \"src/**/*.spec.ts\" --opts mocha.opts",
+    "test": "nyc mocha --opts mocha.opts",
     "test:coverage": "nyc check-coverage --lines 50 --functions 50 --branches 50",
     "coverage": "nyc report",
     "doc": "typedoc --out doc src --exclude src/runtime/lib.bak/**/*"
   },
   "nyc": {
+    "require": [
+      "ts-node/register"
+    ],
     "extension": [
       ".ts",
       ".tsx"
@@ -35,7 +38,7 @@
     ],
     "exclude": [
       "**/*.d.ts",
-      "**/index.ts"
+      "**/*.spec.ts"
     ],
     "reporter": [
       "html"
