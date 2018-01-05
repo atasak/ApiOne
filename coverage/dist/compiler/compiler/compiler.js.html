@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for dist/compiler/compiler/compiler.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">All files</a> / <a href="index.html">dist/compiler/compiler</a> compiler.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/44</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/21</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/12</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/39</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use strict";
+var __awaiter = <span class="cstat-no" title="statement not covered" >(this &amp;&amp; this.__awaiter) || <span class="fstat-no" title="function not covered" >fu</span>nction (thisArg, _arguments, P, generator) {</span>
+<span class="cstat-no" title="statement not covered" >    return new (P || (P = Promise))(<span class="fstat-no" title="function not covered" >fu</span>nction (resolve, reject) {</span>
+        function <span class="fstat-no" title="function not covered" >fulfilled(</span>value) { <span class="cstat-no" title="statement not covered" >try { <span class="cstat-no" title="statement not covered" >step(generator.next(value)); </span>} catch (e) { <span class="cstat-no" title="statement not covered" >reject(e); </span>} </span>}
+        function <span class="fstat-no" title="function not covered" >rejected(</span>value) { <span class="cstat-no" title="statement not covered" >try { <span class="cstat-no" title="statement not covered" >step(generator["throw"](value)); </span>} catch (e) { <span class="cstat-no" title="statement not covered" >reject(e); </span>} </span>}
+        function <span class="fstat-no" title="function not covered" >step(</span>result) { <span class="cstat-no" title="statement not covered" >result.done ? resolve(result.value) : new P(<span class="fstat-no" title="function not covered" >fu</span>nction (resolve) { <span class="cstat-no" title="statement not covered" >resolve(result.value); </span>}).then(fulfilled, rejected); </span>}
+<span class="cstat-no" title="statement not covered" >        step((generator = generator.apply(thisArg, _arguments || [])).next());</span>
+    });
+};
+<span class="cstat-no" title="statement not covered" >Object.defineProperty(exports, "__esModule", { value: true });</span>
+const fs_1 = <span class="cstat-no" title="statement not covered" >require("fs");</span>
+const schemer_1 = <span class="cstat-no" title="statement not covered" >require("./schemer");</span>
+class ApiOneCompiler {
+    /**
+     * Constructor
+     *a
+     */
+<span class="fstat-no" title="function not covered" >    co</span>nstructor() {
+<span class="cstat-no" title="statement not covered" >        this.defaultConfig = {</span>
+            tsConfigFilePath: 'tsconfig.apione.json',
+            sourcePath: 'common',
+            rootType: 'ApiRoot',
+            silent: false,
+            printDatastructures: false,
+            emitTypescript: '',
+            emitJavascript: '',
+            emitDeclaration: '',
+        };
+<span class="cstat-no" title="statement not covered" >        this.config = {};</span>
+<span class="cstat-no" title="statement not covered" >        Object.assign(this.config, this.defaultConfig);</span>
+    }
+<span class="fstat-no" title="function not covered" >    lo</span>adConfigFromFile(file) {
+        const contents = <span class="cstat-no" title="statement not covered" >fs_1.readFileSync(file, 'utf8');</span>
+        const json = <span class="cstat-no" title="statement not covered" >JSON.parse(contents);</span>
+<span class="cstat-no" title="statement not covered" >        this.loadConfig(json);</span>
+    }
+<span class="fstat-no" title="function not covered" >    lo</span>adConfig(config) {
+<span class="cstat-no" title="statement not covered" >        Object.assign(this.config, config);</span>
+    }
+<span class="fstat-no" title="function not covered" >    ru</span>n() {
+<span class="cstat-no" title="statement not covered" >        return __awaiter(this, void 0, void 0, <span class="fstat-no" title="function not covered" >fu</span>nction* () {</span>
+<span class="cstat-no" title="statement not covered" >            if (!this.config.silent)</span>
+<span class="cstat-no" title="statement not covered" >                console.log('Embedding ApiOne...');</span>
+<span class="cstat-no" title="statement not covered" >            this.schemer = new schemer_1.Schemer(this.config);</span>
+<span class="cstat-no" title="statement not covered" >            this.classMap = this.schemer.run();</span>
+            let gen = <span class="cstat-no" title="statement not covered" >Promise.resolve();</span>
+            let emit = <span class="cstat-no" title="statement not covered" >Promise.resolve();</span>
+<span class="cstat-no" title="statement not covered" >            if (this.config.printDatastructures)</span>
+<span class="cstat-no" title="statement not covered" >                this.print();</span>
+<span class="cstat-no" title="statement not covered" >            if (this.config.emitTypescript !== '')</span>
+<span class="cstat-no" title="statement not covered" >                gen = this.schemer.gen();</span>
+<span class="cstat-no" title="statement not covered" >            if (this.config.emitJavascript !== '' || this.config.emitDeclaration !== '')</span>
+<span class="cstat-no" title="statement not covered" >                emit = this.schemer.emit();</span>
+<span class="cstat-no" title="statement not covered" >            yield Promise.all([gen, emit]);</span>
+<span class="cstat-no" title="statement not covered" >            if (!this.config.silent)</span>
+<span class="cstat-no" title="statement not covered" >                this.schemer.diagnose();</span>
+        });
+    }
+<span class="fstat-no" title="function not covered" >    pr</span>int() {
+<span class="cstat-no" title="statement not covered" >        for (const entry of this.classMap.entries()) {</span>
+            const key = <span class="cstat-no" title="statement not covered" >entry[0];</span>
+            const value = <span class="cstat-no" title="statement not covered" >entry[1];</span>
+<span class="cstat-no" title="statement not covered" >            console.log(`${key}: `);</span>
+<span class="cstat-no" title="statement not covered" >            console.log(value.asString());</span>
+        }
+    }
+}
+<span class="cstat-no" title="statement not covered" >exports.ApiOneCompiler = ApiOneCompiler;</span>
+class ApiOneConfig {
+}
+<span class="cstat-no" title="statement not covered" >exports.ApiOneConfig = ApiOneConfig;</span>
+//# sourceMappingURL=compiler.js.map</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Jan 05 2018 16:54:03 GMT+0100 (STD)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

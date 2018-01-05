@@ -20,18 +20,39 @@
     "build:linux": "rm -rf dist && npm run build",
     "build:travis": "tsc",
     "run": "node dist/compiler/runner.js",
-    "test": "jasmine-ts",
+    "test": "nyc mocha \"src/**/*.spec.ts\" --opts mocha.opts",
+    "test:coverage": "nyc check-coverage --lines 50 --functions 50 --branches 50",
+    "coverage": "nyc report",
     "doc": "typedoc --out doc src --exclude src/runtime/lib.bak/**/*"
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "**/index.ts"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true
   },
   "dependencies": {
     "@types/node": "^8.5.2",
     "ts-simple-ast": "^5.3.1"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.8.0",
-    "jasmine": "^2.8.0",
-    "jasmine-spec-reporter": "^4.2.1",
-    "jasmine-ts": "^0.2.1",
+    "@types/chai": "^4.0.10",
+    "@types/mocha": "^2.2.46",
+    "@types/sinon": "^4.1.2",
+    "chai": "^4.1.2",
+    "mocha": "^4.1.0",
+    "nyc": "^11.4.1",
+    "sinon": "^4.1.3",
+    "source-map-support": "^0.5.0",
+    "ts-node": "^4.1.0",
     "tslint": "^5.8.0"
   }
 }

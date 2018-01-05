@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/util/promisemap.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">All files</a> / <a href="index.html">src/util</a> promisemap.ts
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">9.76% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>4/41</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/10</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/21</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">10.53% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>4/38</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {IteratorMap} from './iterator';
+import {OneMap} from './onemap';
+import {Printable} from './printable';
+import {SyncPromise} from './syncpromise';
+&nbsp;
+export class PromiseMap&lt;K, V&gt; implements Map&lt;K, V&gt; {
+<span class="cstat-no" title="statement not covered" >    [Symbol.iterator] = this.entries;</span>
+    private map: OneMap&lt;K, PromiseWrapper&lt;V&gt;&gt;;
+<span class="cstat-no" title="statement not covered" >    [Symbol.toStringTag] = this.map[Symbol.toStringTag];</span>
+&nbsp;
+<span class="fstat-no" title="function not covered" >    constructor () {</span>
+<span class="cstat-no" title="statement not covered" >        this.map = new OneMap&lt;K, PromiseWrapper&lt;V&gt;&gt;(<span class="fstat-no" title="function not covered" >() </span>=&gt; <span class="cstat-no" title="statement not covered" >new PromiseWrapper&lt;V&gt;())</span>;</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    get </span>size () {
+<span class="cstat-no" title="statement not covered" >        return this.map.size;</span>
+    };
+&nbsp;
+<span class="fstat-no" title="function not covered" >    clear</span> (): void {
+<span class="cstat-no" title="statement not covered" >        this.map.clear();</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    delete</span> (key: K): boolean {
+<span class="cstat-no" title="statement not covered" >        return this.map.delete(key);</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    forEach</span> (callbackfn: (value: V, key: K, map: Map&lt;K, V&gt;) =&gt; void, thisArg?: any): void {
+<span class="cstat-no" title="statement not covered" >        this.map.forEach(<span class="fstat-no" title="function not covered" >(v</span>alue, key) =&gt; <span class="cstat-no" title="statement not covered" >value.value == null || callbackfn(value.value, key, this),</span> thisArg);</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    set</span> (key: K, value: V): this {
+<span class="cstat-no" title="statement not covered" >        this.map.getOrCreate(key).resolve(value);</span>
+<span class="cstat-no" title="statement not covered" >        return this;</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    entries</span> (): IterableIterator&lt;[K, V]&gt; {
+<span class="cstat-no" title="statement not covered" >        return new IteratorMap&lt;[K, PromiseWrapper&lt;V&gt;], [K, V]&gt;(</span>
+            this.map.entries(), <span class="fstat-no" title="function not covered" >(e</span>ntry: [K, PromiseWrapper&lt;V&gt;]) =&gt; {
+                const value = <span class="cstat-no" title="statement not covered" >entry[1].value;</span>
+<span class="cstat-no" title="statement not covered" >                if (value == null)</span>
+<span class="cstat-no" title="statement not covered" >                    return null;</span>
+<span class="cstat-no" title="statement not covered" >                return [entry[0], value];</span>
+            });
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    keys</span> (): IterableIterator&lt;K&gt; {
+<span class="cstat-no" title="statement not covered" >        return this.map.keys();</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    values</span> (): IterableIterator&lt;V&gt; {
+<span class="cstat-no" title="statement not covered" >        return new IteratorMap&lt;PromiseWrapper&lt;V&gt;, V&gt;(this.map.values(), <span class="fstat-no" title="function not covered" >v </span>=&gt; <span class="cstat-no" title="statement not covered" >v.value)</span>;</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    get</span> (key: K): V | undefined {
+<span class="cstat-no" title="statement not covered" >        return this.map.getOrCreate(key).value || undefined;</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    promise</span> (key: K): Promise&lt;V&gt; {
+<span class="cstat-no" title="statement not covered" >        return this.map.getOrCreate(key).promise;</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    has</span> (key: K): boolean {
+<span class="cstat-no" title="statement not covered" >        return this.map.has(key);</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    finalize</span> () {
+<span class="cstat-no" title="statement not covered" >        for (const key of this.map.keys()) {</span>
+<span class="cstat-no" title="statement not covered" >            if (this.map.getOrCreate(key).value === null)</span>
+<span class="cstat-no" title="statement not covered" >                this.map.getOrCreate(key).reject('Key never resolved...');</span>
+        }
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    log</span> () {
+<span class="cstat-no" title="statement not covered" >        for (const key of this.map.keys()) {</span>
+<span class="cstat-no" title="statement not covered" >            console.log(`${key}: `);</span>
+            const value = <span class="cstat-no" title="statement not covered" >this.map.getOrCreate(key).value;</span>
+<span class="cstat-no" title="statement not covered" >            if ((value as { [key: string]: any })['asString'] != null)</span>
+<span class="cstat-no" title="statement not covered" >                console.log((value as any as Printable).asString());</span>
+            else
+<span class="cstat-no" title="statement not covered" >                console.log(value);</span>
+        }
+    }
+}
+&nbsp;
+class PromiseWrapper&lt;T&gt; {
+    promise: Promise&lt;T&gt;;
+    resolve: (value: T) =&gt; void;
+    reject: (reason: any) =&gt; void;
+<span class="cstat-no" title="statement not covered" >    value: T | null = null;</span>
+&nbsp;
+<span class="fstat-no" title="function not covered" >    constructor () {</span>
+<span class="cstat-no" title="statement not covered" >        this.promise = new SyncPromise&lt;T&gt;(<span class="fstat-no" title="function not covered" >(r</span>esolve, reject) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            this.resolve = resolve;</span>
+<span class="cstat-no" title="statement not covered" >            this.reject = reject;</span>
+        });
+<span class="cstat-no" title="statement not covered" >        this.promise.then(<span class="fstat-no" title="function not covered" >(v</span>al) =&gt;</span>
+<span class="cstat-no" title="statement not covered" >            this.value = val)</span>;
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Jan 05 2018 16:54:03 GMT+0100 (STD)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

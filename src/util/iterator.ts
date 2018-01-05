@@ -46,7 +46,7 @@ export class CombinedIterator$<A, B> implements IterableIterator<[A, B]> {
     }
 }
 
-export class CombinedIterator_<A, B> implements IterableIterator<[A | null, B | null]> {
+export class CombinedIterator<A, B> implements IterableIterator<[A | null, B | null]> {
     private readonly a: Iterator<A>;
     private readonly b: Iterator<B>;
 

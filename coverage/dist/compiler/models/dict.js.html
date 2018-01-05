@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for dist/compiler/models/dict.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">All files</a> / <a href="index.html">dist/compiler/models</a> dict.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/26</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/10</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/7</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/26</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use strict";
+<span class="cstat-no" title="statement not covered" >Object.defineProperty(exports, "__esModule", { value: true });</span>
+const type_1 = <span class="cstat-no" title="statement not covered" >require("./type");</span>
+const typeutils_1 = <span class="cstat-no" title="statement not covered" >require("./typeutils");</span>
+class Dict extends type_1.Type {
+<span class="fstat-no" title="function not covered" >    co</span>nstructor(indexType, type) {
+<span class="cstat-no" title="statement not covered" >        super();</span>
+<span class="cstat-no" title="statement not covered" >        this.indexType = indexType;</span>
+<span class="cstat-no" title="statement not covered" >        this.type = type;</span>
+<span class="cstat-no" title="statement not covered" >        this.valueManagerName = 'DictWrapper';</span>
+    }
+<span class="fstat-no" title="function not covered" >    ge</span>t typeAsString() {
+<span class="cstat-no" title="statement not covered" >        return Dict.TypeAsString(this.indexType, this.type);</span>
+    }
+<span class="fstat-no" title="function not covered" >    st</span>atic Construct(schemer, typeNode) {
+        const indexType = <span class="cstat-no" title="statement not covered" >Dict.IndexTypeOf(typeNode);</span>
+        const type = <span class="cstat-no" title="statement not covered" >Dict.TypeOf(schemer, typeNode);</span>
+        const mapType = <span class="cstat-no" title="statement not covered" >Dict.TypeAsString(indexType, type);</span>
+<span class="cstat-no" title="statement not covered" >        if (!schemer.structures.has(mapType))</span>
+<span class="cstat-no" title="statement not covered" >            schemer.structures.set(mapType, new Dict(indexType, type));</span>
+<span class="cstat-no" title="statement not covered" >        return schemer.structures.get(mapType);</span>
+    }
+<span class="fstat-no" title="function not covered" >    st</span>atic TypeAsString(indexType, type) {
+<span class="cstat-no" title="statement not covered" >        return `{ [key: ${indexType.toLowerCase()}]: ${type.typeAsString} }`;</span>
+    }
+<span class="fstat-no" title="function not covered" >    st</span>atic IndexTypeOf(typeNode) {
+<span class="cstat-no" title="statement not covered" >        if (typeNode.getStringIndexType() !== undefined)</span>
+<span class="cstat-no" title="statement not covered" >            return 'String';</span>
+<span class="cstat-no" title="statement not covered" >        if (typeNode.getNumberIndexType() !== undefined)</span>
+<span class="cstat-no" title="statement not covered" >            return 'Number';</span>
+<span class="cstat-no" title="statement not covered" >        return 'String';</span>
+    }
+<span class="fstat-no" title="function not covered" >    st</span>atic TypeOf(schemer, typeNode) {
+        const mapTypeNode = <span class="cstat-no" title="statement not covered" >typeNode.getNumberIndexType() || typeNode.getStringIndexType();</span>
+<span class="cstat-no" title="statement not covered" >        if (mapTypeNode == null)</span>
+            // TODO: Create more specific error when numberIndexType or stringIndexType does not exist on Map
+<span class="cstat-no" title="statement not covered" >            throw new Error();</span>
+<span class="cstat-no" title="statement not covered" >        return typeutils_1.getTypeInfo(schemer, mapTypeNode);</span>
+    }
+<span class="fstat-no" title="function not covered" >    as</span>String() {
+<span class="cstat-no" title="statement not covered" >        return `    ${this.typeAsString}`;</span>
+    }
+}
+<span class="cstat-no" title="statement not covered" >exports.Dict = Dict;</span>
+//# sourceMappingURL=dict.js.map</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Jan 05 2018 16:54:03 GMT+0100 (STD)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>
