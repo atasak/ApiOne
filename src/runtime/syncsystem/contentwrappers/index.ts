@@ -1,3 +1,2 @@
-export {ClassWrapper} from './classwrapper';
-export {DictWrapper} from './dictwrapper';
-export {ListWrapper} from './listwrapper';
+export {ClassWrapper, DictWrapper, ListWrapper} from './wrappers';
+export {Resolved, ResolvableWrapper, ProxyWrapper} from './abstractwrapper';

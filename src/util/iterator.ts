@@ -8,10 +8,10 @@ export class IteratorMap<TFrom, TTo> implements IterableIterator<TTo> {
 
     next (): IteratorResult<TTo> {
         while (true) {
-            const next = this.iterator.next();
+            const next = this.iterator.next ();
             if (next.done)
                 return {done: true} as IteratorResult<TTo>;
-            const value = this.map(next.value);
+            const value = this.map (next.value);
             if (value != null)
                 return {
                     done: next.done,
@@ -21,9 +21,13 @@ export class IteratorMap<TFrom, TTo> implements IterableIterator<TTo> {
     }
 }
 
-export class CombinedIteratorIntersect<A, B> implements IterableIterator<[A, B]> {
-    constructor (private a: IterableIterator<A>, private b: IterableIterator<B>) {
+export class CombinedIterator$<A, B> implements IterableIterator<[A, B]> {
+    private readonly a: Iterator<A>;
+    private readonly b: Iterator<B>;
 
+    constructor (a: Iterable<A>, b: Iterable<B>) {
+        this.a = a[Symbol.iterator] ();
+        this.b = b[Symbol.iterator] ();
     }
 
     [Symbol.iterator] (): IterableIterator<[A, B]> {
@@ -31,8 +35,8 @@ export class CombinedIteratorIntersect<A, B> implements IterableIterator<[A, B]>
     }
 
     next (): IteratorResult<[A, B]> {
-        const nextA = this.a.next();
-        const nextB = this.b.next();
+        const nextA = this.a.next ();
+        const nextB = this.b.next ();
         if (nextA.done || nextB.done)
             return {done: true} as IteratorResult<[A, B]>;
         return {
@@ -42,9 +46,13 @@ export class CombinedIteratorIntersect<A, B> implements IterableIterator<[A, B]>
     }
 }
 
-export class CombinedIteratorUnion<A, B> implements IterableIterator<[A | null, B | null]> {
-    constructor (private a: IterableIterator<A>, private b: IterableIterator<B>) {
+export class CombinedIterator_<A, B> implements IterableIterator<[A | null, B | null]> {
+    private readonly a: Iterator<A>;
+    private readonly b: Iterator<B>;
 
+    constructor (a: Iterable<A>, b: Iterable<B>) {
+        this.a = a[Symbol.iterator] ();
+        this.b = b[Symbol.iterator] ();
     }
 
     [Symbol.iterator] (): IterableIterator<[A | null, B | null]> {
@@ -52,8 +60,8 @@ export class CombinedIteratorUnion<A, B> implements IterableIterator<[A | null, 
     }
 
     next (): IteratorResult<[A | null, B | null]> {
-        const nextA = this.a.next();
-        const nextB = this.b.next();
+        const nextA = this.a.next ();
+        const nextB = this.b.next ();
         if (nextA.done && nextB.done)
             return {done: true} as IteratorResult<[A, B]>;
         return {
