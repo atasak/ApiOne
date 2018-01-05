@@ -30,6 +30,9 @@
       ".ts",
       ".tsx"
     ],
+    "include": [
+      "src/**/*.ts"
+    ],
     "exclude": [
       "**/*.d.ts",
       "**/index.ts"
