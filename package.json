@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@types/node": "^8.5.2",
-    "ts-simple-ast": "^5.0.0"
+    "ts-simple-ast": "^5.3.1"
   },
   "devDependencies": {
     "@types/jasmine": "^2.8.0",

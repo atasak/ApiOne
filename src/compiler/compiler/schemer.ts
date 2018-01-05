@@ -29,7 +29,7 @@ export class Schemer {
         this.ast.forgetNodesCreatedInBlock(remember => {
             this.ast.addExistingSourceFiles(`${this.config.sourcePath}/**/*.ts`);
             const dir = this.ast.getDirectoryOrThrow(this.config.sourcePath);
-            this.genDir = dir.copy(this.config.emitTypescript || '.');
+            this.genDir = dir.copy(this.config.emitTypescript || '.', {overwrite: true});
             const sources = this.genDir.getSourceFiles();
             for (const source of sources)
                 this.extractStructures(source, remember);
