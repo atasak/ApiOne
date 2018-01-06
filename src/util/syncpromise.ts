@@ -24,15 +24,17 @@ export class SyncPromise<T> implements Promise<T> {
     }
 
     then<R1, R2> (onfulfilled?: Resolve<T, R1>, onrejected?: Reject<R2>): Promise<R1 | R2> {
-        this.catch<R2>(onrejected);
+        const catchPromise = this.catch<R2>(onrejected);
 
         if (!onfulfilled)
             return new SyncPromise<R1 | R2>(noop);
 
         if (this.state === PromiseState.Pending)
             return this.getResolvePromise<R1 | R2>(onfulfilled);
-        else
+        else if (this.state === PromiseState.Resolved)
             return this.afterResponse<R1>(onfulfilled(this.resolveValue));
+        else
+            return catchPromise;
     }
 
     catch<R> (onrejected?: Reject<R>): Promise<R> {

@@ -1,11 +1,6 @@
-import {should, use} from 'chai';
 import {SinonSpy, spy as Spy} from 'sinon';
 import {IdFactory, idMatchesMask, ResolvableIdFactory} from './id';
 import {Iterate} from './iterator';
-import sinonChai = require('sinon-chai');
-
-should();
-use(sinonChai);
 
 describe('The id factory', () => {
     const testMask = '0+$$';

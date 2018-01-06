@@ -22,11 +22,14 @@ describe('Synchronous promises', () => {
     });
 
     it('should only accept a resolve once', () => {
-        spy1 = Spy(resolve => {
-            resolve();
-            resolve();
+        spy1 = Spy((resolve: (x: string) => void) => {
+            resolve('x');
+            resolve('x');
         });
-        new Promise(resolve => spy1);
+        try {
+            new SyncPromise<string>(spy1);
+        } catch (e) {
+        }
         spy1.should.have.thrown;
     });
 

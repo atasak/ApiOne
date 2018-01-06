@@ -1,6 +1,10 @@
-import {flatten, OneMap, unMap} from '../../util/onemap';
+import {objToMap, ResolvableId} from '../../util';
+import {flatten, mapToObj, OneMap} from '../../util/onemap';
 import {ID} from '../../util/utils';
-import {AdditiveMap, FollowMap, Map1, Map2, Map3, Obj1, Obj2, Obj3, Package, Primitive, ResolveMap, SubstractiveMap} from './package';
+import {
+    AdditiveMap, DataObj, FollowMap, Map1, Map2, Map3, Obj1, Obj2, Obj3, Package, Primitive, ResolveMap,
+    SubstractiveMap,
+} from './package';
 import Timer = NodeJS.Timer;
 
 export type PackageType = 'resolve' | 'broadcast';
@@ -29,16 +33,16 @@ export class PackageCollector {
         this.setTimeout();
     }
 
-    addObj (type: string, id: string, data: Map1<Primitive>) {
+    addObj (type: string, id: string, data: DataObj) {
         this.getCollector('broadcast')
             .additive
             .getOrCreate(type)
-            .set(id, data);
+            .set(id, objToMap(data,));
 
         this.setTimeout();
     }
 
-    addField (type: string, id: string, field: string, data: Primitive) {
+    addField (type: string, id: string, field: string, data: ResolvableId | Primitive) {
         this.getCollector('broadcast')
             .additive
             .getOrCreate(type)
@@ -117,19 +121,19 @@ class CollectingPackage {
     }
 
     unmapResolveFollow (map2: Map2<string>): Obj1<string[]> {
-        return unMap<Map1<string>, string[]>(map2, (map1: Map1<string>) =>
+        return mapToObj<Map1<string>, string[]>(map2, (map1: Map1<string>) =>
             flatten<string, string>(map1, ID));
     }
 
     unmapAdditive (map3: Map3<Primitive>): Obj3<Primitive> {
-        return unMap<Map2<Primitive>, Obj2<Primitive>>(map3, (map2: Map2<Primitive>) =>
-            unMap<Map1<Primitive>, Obj1<Primitive>>(map2, (map1: Map1<Primitive>) =>
-                unMap<Primitive, Primitive>(map1, ID)));
+        return mapToObj<Map2<Primitive>, Obj2<Primitive>>(map3, (map2: Map2<Primitive>) =>
+            mapToObj<Map1<Primitive>, Obj1<Primitive>>(map2, (map1: Map1<Primitive>) =>
+                mapToObj<Primitive, Primitive>(map1, ID)));
     }
 
     unmapSubstractive (map3: Map3<string>): Obj2<string[]> {
-        return unMap<Map2<string>, Obj1<string[]>>(map3, (map2: Map2<string>) =>
-            unMap<Map1<string>, string[]>(map2, (map1: Map1<string>) =>
+        return mapToObj<Map2<string>, Obj1<string[]>>(map3, (map2: Map2<string>) =>
+            mapToObj<Map1<string>, string[]>(map2, (map1: Map1<string>) =>
                 flatten<string, string>(map1, ID)));
     }
 
