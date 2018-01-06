@@ -2,6 +2,7 @@
 --require source-map-support/register
 --require chai
 --require sinon
+--require sinon-chai
 --ui bdd
 --recursive
 src/**/*.spec.ts

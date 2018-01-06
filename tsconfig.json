@@ -6,6 +6,10 @@
     "typeRoots": [
       "node_modules/@types"
     ],
+    "types": [
+      "mocha",
+      "node"
+    ],
     "lib": [
       "es2015",
       "es2015.promise",

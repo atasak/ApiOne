@@ -1,28 +1,26 @@
 import {noop} from './utils';
 
 export type Resolve<T, R> = (value: T) => (PromiseLike<R> | R);
-export type Reject<R> = (reason: any) => (PromiseLike<R> | R);
+export type Reject<R> = (reason?: any) => (PromiseLike<R> | R);
 
 export type ResolvableCode<T, R1, R2> = (resolve: Resolve<T, R1>, reject: Reject<R2>) => void;
 
 enum PromiseState {Pending, Resolved, Rejected};
 
 export class SyncPromise<T> implements Promise<T> {
-    [Symbol.toStringTag]: any;
+    static Resolve<T> (t: T): Promise<T> {
+        return new SyncPromise<T>(resolve => resolve(t));
+    }
 
+    [Symbol.toStringTag]: any;
     private resolvers: Resolve<T, any>[] = [];
     private rejectors: Reject<any>[] = [];
-
     private state: PromiseState = PromiseState.Pending;
     private resolveValue: T;
     private rejectReason: any;
 
     constructor (code: ResolvableCode<T, any, any>) {
         code(t => this.resolve(t), r => this.reject(r));
-    }
-
-    static Resolve<T> (t: T): Promise<T> {
-        return new SyncPromise<T>(resolve => resolve(t));
     }
 
     then<R1, R2> (onfulfilled?: Resolve<T, R1>, onrejected?: Reject<R2>): Promise<R1 | R2> {

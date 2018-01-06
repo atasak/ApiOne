@@ -1,11 +1,11 @@
-import {CombinedIterator$} from './iterator';
+import {Iterate} from './iterator';
 import {PromiseMap} from './promisemap';
 import {SyncPromise} from './syncpromise';
 
 export function idMatchesMask (id: string, mask: string): boolean {
     if (id.length !== mask.length)
         return false;
-    for (const [idc, maskc] of new CombinedIterator$<string, string>(id, mask)) {
+    for (const [idc, maskc] of Iterate.from(id).combine$(mask)) {
         if (maskc === '$')
             continue;
         if (maskc === '+' && idc !== '0')
@@ -85,7 +85,7 @@ export class ResolvableIdFactory {
 
     resolveIds (ids: string[]) {
         const resolvedKeys: string[] = [];
-        for (const [oldKey, newKey] of new CombinedIterator$<string, string>(this.promises.keys(), ids)) {
+        for (const [oldKey, newKey] of Iterate.from(this.promises.keys()).combine$(ids)) {
             resolvedKeys.push(oldKey);
             this.promises.set(oldKey, [oldKey, newKey]);
         }

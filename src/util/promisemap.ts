@@ -1,12 +1,12 @@
-import {IteratorMap} from './iterator';
+import {Iterate} from './iterator';
 import {OneMap} from './onemap';
 import {Printable} from './printable';
 import {SyncPromise} from './syncpromise';
 
 export class PromiseMap<K, V> implements Map<K, V> {
     [Symbol.iterator] = this.entries;
+    [Symbol.toStringTag]: any;
     private map: OneMap<K, PromiseWrapper<V>>;
-    [Symbol.toStringTag] = this.map[Symbol.toStringTag];
 
     constructor () {
         this.map = new OneMap<K, PromiseWrapper<V>>(() => new PromiseWrapper<V>());
@@ -34,13 +34,9 @@ export class PromiseMap<K, V> implements Map<K, V> {
     }
 
     entries (): IterableIterator<[K, V]> {
-        return new IteratorMap<[K, PromiseWrapper<V>], [K, V]>(
-            this.map.entries(), (entry: [K, PromiseWrapper<V>]) => {
-                const value = entry[1].value;
-                if (value == null)
-                    return null;
-                return [entry[0], value];
-            });
+        return Iterate
+            .from(this.map.entries())
+            .map(([key, wrapper]) => wrapper.value == null ? null : [key, wrapper.value] as [K, V]);
     }
 
     keys (): IterableIterator<K> {
@@ -48,7 +44,8 @@ export class PromiseMap<K, V> implements Map<K, V> {
     }
 
     values (): IterableIterator<V> {
-        return new IteratorMap<PromiseWrapper<V>, V>(this.map.values(), v => v.value);
+        return Iterate.from(this.map.values())
+            .map(v => v.value);
     }
 
     get (key: K): V | undefined {
@@ -64,10 +61,10 @@ export class PromiseMap<K, V> implements Map<K, V> {
     }
 
     finalize () {
-        for (const key of this.map.keys()) {
-            if (this.map.getOrCreate(key).value === null)
-                this.map.getOrCreate(key).reject('Key never resolved...');
-        }
+        this.map.forEach(wrapper => {
+            if (wrapper.value === null)
+                wrapper.reject('Key never resolved...');
+        });
     }
 
     log () {
