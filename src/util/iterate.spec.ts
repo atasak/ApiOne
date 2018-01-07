@@ -1,9 +1,14 @@
 import {SinonSpy, spy as Spy} from 'sinon';
-import {Iterate} from './iterator';
+import {Iterate} from './iterate';
 
 describe('Iterator mapping and combining', () => {
     const array1 = [3, 6, 8];
     const array2 = [3, 7];
+    const obj = {
+        a: 1,
+        b: 2,
+        c: 3,
+    };
 
     let spy: SinonSpy;
 
@@ -47,5 +52,13 @@ describe('Iterator mapping and combining', () => {
         for (const _ of Iterate.range(4))
             spy();
         spy.should.have.callCount(4);
+    });
+
+    it('should create a valid object iterator', () => {
+        for (const i of Iterate.object(obj))
+            spy(i);
+        spy.firstCall.should.have.been.calledWith(['a', 1]);
+        spy.secondCall.should.have.been.calledWith(['b', 2]);
+        spy.thirdCall.should.have.been.calledWith(['c', 3]);
     });
 });

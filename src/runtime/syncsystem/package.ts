@@ -1,4 +1,4 @@
-import {ResolvableId} from '../../util';
+import {ResolvingId} from '../../util';
 import {OneMap} from '../../util/onemap';
 
 export type Status = 100 | 400 | 403 | 404 | 500;
@@ -10,7 +10,7 @@ export const statusText = {
     500: 'Network Error',
 };
 
-export type DataObj = { [key: string]: ResolvableId | Primitive }
+export type DataObj = { [key: string]: ResolvingId | Primitive }
 export type Primitive = string | number | boolean;
 
 export type Map1<T> = Map<string, T>;

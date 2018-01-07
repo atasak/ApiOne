@@ -1,28 +1,31 @@
-import {objToMap, ResolvableId} from '../../util';
-import {flatten, mapToObj, OneMap} from '../../util/onemap';
-import {ID} from '../../util/utils';
+import {doAsync, flatten, ID, Iterate, mapToObj, OneMap, ResolvingId} from '../../util';
 import {
     AdditiveMap, DataObj, FollowMap, Map1, Map2, Map3, Obj1, Obj2, Obj3, Package, Primitive, ResolveMap,
     SubstractiveMap,
 } from './package';
-import Timer = NodeJS.Timer;
 
 export type PackageType = 'resolve' | 'broadcast';
+
+async function toPrimitive (x: ResolvingId | Primitive): Promise<Primitive> {
+    if (x instanceof ResolvingId)
+        return (await x.promise)[1];
+    return x;
+}
 
 export class PackageCollector {
     private resolvePackage = new CollectingPackage();
     private broadcastPackage = new CollectingPackage();
     private channels = new OneMap<string, CollectingPackage>(() => new CollectingPackage());
-    private timeout: Timer | null = null;
+    private timeout: Promise<void> | null;
 
     constructor (private callback: (pack: Package, type: PackageType, receiver?: string) => void) {
     }
 
-    resolve (type: string, id: string, follow: string[] = []) {
+    async resolve (type: string, id: ResolvingId, follow: string[] = []) {
         this.getCollector('resolve')
             .resolve
             .getOrCreate(type)
-            .set(id, '');
+            .set((await id.promise)[1], (await id.promise)[1]);
 
         for (const f of follow)
             this.getCollector('resolve')
@@ -30,36 +33,43 @@ export class PackageCollector {
                 .getOrCreate(type)
                 .set(f, '');
 
-        this.setTimeout();
+        await this.setTimeout();
     }
 
-    addObj (type: string, id: string, data: DataObj) {
+    async addObj (type: string, id: ResolvingId, data: DataObj) {
+        const map = this.getCollector('broadcast')
+            .additive
+            .getOrCreate(type)
+            .getOrCreate((await id.promise)[1]);
+        Iterate.object(data).forEach(async ([key, value]) => map.set(key, await toPrimitive(value)));
+
+        await this.setTimeout();
+    }
+
+    async addField (type: string, id: ResolvingId, field: string, data: ResolvingId | Primitive) {
         this.getCollector('broadcast')
             .additive
             .getOrCreate(type)
-            .set(id, objToMap(data,));
+            .getOrCreate((await id.promise)[1])
+            .set(field, await toPrimitive(data));
 
-        this.setTimeout();
+        await this.setTimeout();
     }
 
-    addField (type: string, id: string, field: string, data: ResolvableId | Primitive) {
-        this.getCollector('broadcast')
-            .additive
-            .getOrCreate(type)
-            .getOrCreate(id)
-            .set(field, data);
-
-        this.setTimeout();
-    }
-
-    deleteKey (type: string, id: string, field: string) {
+    async deleteKey (type: string, id: ResolvingId, field: string) {
         this.getCollector('broadcast')
             .substractive
             .getOrCreate(type)
-            .getOrCreate(id)
-            .set(field, '');
+            .getOrCreate((await id.promise)[1])
+            .set(field, field);
 
-        this.setTimeout();
+        await this.setTimeout();
+    }
+
+    async requestIds (ids: number) {
+        this.getCollector('resolve').requestIds += ids;
+
+        await this.setTimeout();
     }
 
     sendPackage (channel: string, packageType: PackageType, receiver?: string) {
@@ -68,10 +78,8 @@ export class PackageCollector {
             this.callback(channelCollector.toPackage(), packageType, receiver);
             this.channels.delete(channel);
         }
-    }
 
-    requestIds (ids: number) {
-        this.getCollector('resolve').requestIds += ids;
+        this.setTimeout();
     }
 
     private getCollector (pack: PackageType): CollectingPackage {
@@ -80,16 +88,18 @@ export class PackageCollector {
         return this.broadcastPackage;
     }
 
-    private setTimeout () {
+    private async setTimeout () {
         if (this.timeout == null)
-            this.timeout = setTimeout(() => {
+            this.timeout = doAsync(() => {
                 if (!this.resolvePackage.empty())
                     this.callback(this.resolvePackage.toPackage(), 'resolve');
                 if (!this.broadcastPackage.empty())
                     this.callback(this.broadcastPackage.toPackage(), 'broadcast');
                 this.resolvePackage = new CollectingPackage();
                 this.broadcastPackage = new CollectingPackage();
-            }, 0);
+                this.timeout = null;
+            });
+        await this.timeout;
     }
 }
 
@@ -138,6 +148,6 @@ class CollectingPackage {
     }
 
     empty (): boolean {
-        return this.resolve.size + this.additive.size + this.substractive.size === 0;
+        return this.resolve.size + this.additive.size + this.substractive.size + this.requestIds === 0;
     }
 }

@@ -17,7 +17,7 @@ describe('Synchronous promises', () => {
         spy1.should.not.have.been.called;
         resolve('x');
         spy1.should.have.been.calledWith('x');
-        SyncPromise.Resolve<string>('y').then(spy2);
+        SyncPromise.resolve<string>('y').then(spy2);
         spy2.should.have.been.calledWith('y');
     });
 
@@ -34,7 +34,7 @@ describe('Synchronous promises', () => {
     });
 
     it('should chain then\'s correctly', () => {
-        SyncPromise.Resolve('x').then(x => x + 'y').then(spy1);
+        SyncPromise.resolve('x').then(x => x + 'y').then(spy1);
         spy1.should.have.been.calledWith('xy');
     });
 

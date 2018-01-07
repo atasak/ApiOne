@@ -1,15 +1,25 @@
-export class OneMap<I, T> extends Map<I, T> {
-    constructor (private factory: (index: I) => T) {
+export class OneMap<K, V> extends Map<K, V> {
+    constructor (private factory: (index: K) => V) {
         super();
     }
 
-    getOrCreate (index: I, factory?: (index: I) => T): T {
+    getOrCreate (index: K, factory?: (index: K) => V): V {
         let value = this.get(index);
         if (value == null) {
-            value = (factory ? factory : this.factory)(index);
+            value = (factory || this.factory)(index);
             this.set(index, value);
         }
         return value;
+    }
+
+    move (from: K, to: K): boolean {
+        if (from === to)
+            return this.has(from);
+        if (!this.has(from) || this.has(to))
+            return false;
+        this.set(to, this.getOrCreate(from));
+        this.delete(from);
+        return true;
     }
 }
 

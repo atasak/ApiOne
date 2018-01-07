@@ -1,3 +1,4 @@
+import {ResolvingId} from '../../../util';
 import {ReType} from '../../../util/types';
 import {IContentManager} from '../contentmanager';
 import {ProxyWrapper, ResolvableWrapper} from './abstractwrapper';
@@ -8,11 +9,11 @@ export interface ClassHandler<T extends ClassHandler<T>> {
 }
 
 export class ClassWrapper<T extends ClassHandler<T>> extends ResolvableWrapper<T> {
-    static readonly Wrapper = Symbol ();
-    static readonly TypeMap = Symbol ();
+    static readonly Wrapper = Symbol();
+    static readonly TypeMap = Symbol();
 
-    constructor (manager: IContentManager, type: string, id: string, private handler: T) {
-        super (manager, type, id);
+    constructor (manager: IContentManager, type: string, id: ResolvingId, private handler: T) {
+        super(manager, type, id);
         handler._one_wrapper = this;
     }
 

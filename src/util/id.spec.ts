@@ -1,6 +1,7 @@
 import {SinonSpy, spy as Spy} from 'sinon';
 import {IdFactory, idMatchesMask, ResolvableIdFactory} from './id';
-import {Iterate} from './iterator';
+import {Iterate} from './iterate';
+import {doAsync} from './utils';
 
 describe('The id factory', () => {
     const testMask = '0+$$';
@@ -43,12 +44,15 @@ describe('The resolvable id factory', () => {
         stub = Spy();
     });
 
-    it('should resolve an id after it\'s creation', () => {
+    it('should resolve an id after it\'s creation', done => {
         const id = idFactory.id();
         const oldId = id.id;
         id.promise.then(stub);
         idFactory.resolveIds(['1111', '2222']);
-        stub.should.have.been.calledWith([oldId, '1111']);
-        stub.should.have.been.calledOnce;
+        doAsync(() => {
+            stub.should.have.been.calledWith([oldId, '1111']);
+            stub.should.have.been.calledOnce;
+            done();
+        });
     });
 });

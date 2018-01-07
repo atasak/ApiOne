@@ -8,7 +8,7 @@ export type ResolvableCode<T, R1, R2> = (resolve: Resolve<T, R1>, reject: Reject
 enum PromiseState {Pending, Resolved, Rejected};
 
 export class SyncPromise<T> implements Promise<T> {
-    static Resolve<T> (t: T): Promise<T> {
+    static resolve<T> (t: T): Promise<T> {
         return new SyncPromise<T>(resolve => resolve(t));
     }
 
@@ -82,7 +82,7 @@ export class SyncPromise<T> implements Promise<T> {
     private afterResponse<R> (next: any): Promise<R> {
         if (next instanceof Promise || next instanceof SyncPromise)
             return next;
-        return SyncPromise.Resolve(<R>next);
+        return SyncPromise.resolve(<R>next);
     }
 
     private checkState (newState: PromiseState) {

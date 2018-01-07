@@ -7,6 +7,10 @@ export class Iterate<T> implements IterableIterator<T> {
         return new RangeIterator(from, to);
     }
 
+    static object<TNew> (object: { [key: string]: TNew }): ObjectIterate<TNew> {
+        return new ObjectIterate<TNew>(object);
+    }
+
     private thisiterator: Iterator<T>;
 
     constructor (thisiterator?: Iterator<T>) {
@@ -111,11 +115,35 @@ export class RangeIterator extends Iterate<number> {
     }
 
     next (): IteratorResult<number> {
+        if (this.from >= this.to)
+            return {done: true} as IteratorResult<number>;
+
         const result = {
-            done: this.from >= this.to,
+            done: false,
             value: this.from,
         };
         this.from++;
         return result;
+    }
+}
+
+export class ObjectIterate<T> extends Iterate<[string, T]> {
+    private keyIterator: Iterator<string>;
+
+    constructor (private object: { [key: string]: T }) {
+        super();
+        this.keyIterator = Object.keys(object)[Symbol.iterator]();
+    }
+
+    next (): IteratorResult<[string, T]> {
+        const key = this.keyIterator.next();
+        if (key.done === true)
+            return {done: true} as IteratorResult<[string, T]>;
+        if (!this.object.hasOwnProperty(key.value))
+            return this.next();
+        return {
+            done: false,
+            value: [key.value, this.object[key.value]],
+        };
     }
 }

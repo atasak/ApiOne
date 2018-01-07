@@ -1,13 +1,13 @@
 import {SinonSpy, spy as Spy} from 'sinon';
-import {PromiseMap} from './promisemap';
+import {SyncPromiseMap} from './promisemap';
 
 describe('The promisemap', () => {
     let spy: SinonSpy;
-    let promiseMap: PromiseMap<string, string>;
+    let promiseMap: SyncPromiseMap<string, string>;
 
     beforeEach(() => {
         spy = Spy();
-        promiseMap = new PromiseMap<string, string>();
+        promiseMap = new SyncPromiseMap<string, string>();
     });
 
     it('should handle promises correctly when getting and setting', () => {

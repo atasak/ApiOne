@@ -1,6 +1,5 @@
-import {Iterate} from './iterator';
+import {Iterate} from './iterate';
 import {PromiseMap} from './promisemap';
-import {SyncPromise} from './syncpromise';
 
 export function idMatchesMask (id: string, mask: string): boolean {
     if (id.length !== mask.length)
@@ -77,7 +76,7 @@ export class ResolvableIdFactory {
         this.idFactory = new IdFactory(mask);
     }
 
-    id (): ResolvableId {
+    id (): ResolvingId {
         const tempId = this.idFactory.id();
         const promise = this.promises.promise(tempId);
         return new ResolvingId(tempId, promise);
@@ -94,18 +93,13 @@ export class ResolvableIdFactory {
     }
 }
 
-export class ResolvingId implements ResolvableId {
+export class ResolvingId implements ResolvingId {
     constructor (private _id: string,
-                 public readonly promise: Promise<[string, string]> = SyncPromise.Resolve<[string, string]>([_id, _id])) {
-        this.promise.then(ids => this._id = ids[1]);
+                 public readonly promise: Promise<[string, string]> = Promise.resolve<[string, string]>([_id, _id])) {
+        this.promise.then(([_, id]) => this._id = id);
     }
 
     get id () {
         return this._id;
     }
-}
-
-export interface ResolvableId {
-    readonly id: string
-    readonly promise: Promise<[string, string]>
 }
