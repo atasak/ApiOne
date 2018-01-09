@@ -13,6 +13,13 @@ describe('The packagecollector', () => {
     const bar = 'bar';
     const type = 'A';
 
+    async function checkAndPack (spy: SinonSpy, promise: Promise<void>): Promise<Package> {
+        spy.should.not.have.been.called;
+        await promise;
+        spy.should.have.been.called;
+        return spy.firstCall.args[0];
+    }
+
     beforeEach(() => {
         spy = Spy();
         packageCollector = new PackageCollector(spy);
@@ -25,20 +32,14 @@ describe('The packagecollector', () => {
 
     it('should collect and eventually send resolve requests', async () => {
         const promise = packageCollector.resolve(type, id);
-        spy.should.not.have.been.called;
-        await promise;
-        spy.should.have.been.called;
-        const pack: Package = spy.firstCall.args[0];
+        const pack = await checkAndPack(spy, promise);
         const A = pack.resolve[type];
         A[0].should.be.equal(id.id);
     });
 
     it('should collect and eventually send additive broadcast requests by object', async () => {
         const promise = packageCollector.addObj(type, id, obj);
-        spy.should.not.have.been.called;
-        await promise;
-        spy.should.have.been.called;
-        const pack: Package = spy.firstCall.args[0];
+        const pack = await checkAndPack(spy, promise);
         const A = pack.additive[type];
         const i = A[id.id];
         const hello = i[foo];
@@ -47,10 +48,7 @@ describe('The packagecollector', () => {
 
     it('should collect and eventually send additive broadcast requests by field', async () => {
         const promise = packageCollector.addField(type, id, foo, bar);
-        spy.should.not.have.been.called;
-        await promise;
-        spy.should.have.been.called;
-        const pack: Package = spy.firstCall.args[0];
+        const pack = await checkAndPack(spy, promise);
         const A = pack.additive[type];
         const i = A[id.id];
         const hello = i[foo];
@@ -59,10 +57,7 @@ describe('The packagecollector', () => {
 
     it('should collect and eventually send substractive broadcast requests', async () => {
         const promise = packageCollector.deleteKey(type, id, foo);
-        spy.should.not.have.been.called;
-        await promise;
-        spy.should.have.been.called;
-        const pack: Package = spy.firstCall.args[0];
+        const pack = await checkAndPack(spy, promise);
         const A = pack.substractive[type];
         const i = A[id.id];
         const field = i[0];
@@ -71,10 +66,7 @@ describe('The packagecollector', () => {
 
     it('should collect and eventually send id requests', async () => {
         const promise = packageCollector.requestIds(4);
-        spy.should.not.have.been.called;
-        await promise;
-        spy.should.have.been.called;
-        const pack: Package = spy.firstCall.args[0];
+        const pack = await checkAndPack(spy, promise);
         pack.requestIds.should.equal(4);
     });
 });

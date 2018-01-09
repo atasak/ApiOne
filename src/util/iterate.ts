@@ -3,8 +3,13 @@ export class Iterate<T> implements IterableIterator<T> {
         return new Iterate<TNew>(iterator[Symbol.iterator]());
     }
 
-    static range (from: number, to?: number): RangeIterator {
-        return new RangeIterator(from, to);
+    static range (_from: number, _to?: number): Iterate<number> {
+        function* rangeGenerator (from: number, to: number): Iterator<number> {
+            for (let i = from; i < to; i++)
+                yield i;
+        }
+
+        return new Iterate<number>(rangeGenerator(_to ? _from : 0, _to || _from));
     }
 
     static object<TNew> (object: { [key: string]: TNew }): ObjectIterate<TNew> {
@@ -96,34 +101,6 @@ export class CombinedIterator<A, B> extends Iterate<[A | null, B | null]> {
             value: [nextA.value == null ? null : nextA.value,
                 nextB.value == null ? null : nextB.value],
         };
-    }
-}
-
-export class RangeIterator extends Iterate<number> {
-    private from: number;
-    private to: number;
-
-    constructor (from: number, to?: number) {
-        super();
-        if (to == null) {
-            this.to = from;
-            this.from = 0;
-        } else {
-            this.from = from;
-            this.to = to;
-        }
-    }
-
-    next (): IteratorResult<number> {
-        if (this.from >= this.to)
-            return {done: true} as IteratorResult<number>;
-
-        const result = {
-            done: false,
-            value: this.from,
-        };
-        this.from++;
-        return result;
     }
 }
 

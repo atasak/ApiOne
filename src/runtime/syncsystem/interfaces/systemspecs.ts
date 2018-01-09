@@ -10,7 +10,7 @@ export interface IdMasks {
 }
 
 export interface SystemSpecs {
-    typeFactories: FactoryMap;
+    dataFactories: FactoryMap;
 
     typeReducer: TypeReducer;
 

@@ -36,7 +36,7 @@ export class TContentManager<TEntry> implements IContentManager, ContentManager<
     private wrappers: OneMap<string, OneMap<string, ResolvableWrapper<any>>>;
     private promises: OneMap<string, SyncPromiseMap<string, ResolvableWrapper<any>>>;
 
-    private typeFactories: FactoryMap;
+    private dataFactories: FactoryMap;
     private typeReducer: TypeReducer;
     private idFactory: ResolvableIdFactory;
     private contentTransformer: ContentTransformer;
@@ -46,7 +46,7 @@ export class TContentManager<TEntry> implements IContentManager, ContentManager<
         this.createWrapperOneMap();
         this.createDataAndPromiseMaps();
 
-        this.typeFactories = specs.typeFactories;
+        this.dataFactories = specs.dataFactories;
         this.typeReducer = specs.typeReducer;
         this.idFactory = new ResolvableIdFactory(specs.masks.temporary);
         this.contentTransformer = new ContentTransformer(this, this.idFactory);
@@ -106,7 +106,7 @@ export class TContentManager<TEntry> implements IContentManager, ContentManager<
     private createWrapperOneMap () {
         this.wrappers = new OneMap<string, OneMap<string, ResolvableWrapper<any>>>(type =>
             new OneMap<string, ResolvableWrapper<any>>(id => {
-                const factory = this.typeFactories.get(type);
+                const factory = this.dataFactories.get(type);
                 if (factory == null)
                 // TODO: Create more specific error when used type does not exist
                     throw new Error();
