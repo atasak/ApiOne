@@ -30,8 +30,8 @@ describe('The type models', () => {
     });
 
     it('should return the correct type for variables', () => {
-        (classType.properties.get('str') as Property).type.typeAsString.should.equal('string')
-        (classType.properties.get('num') as Property).type.typeAsString.should.equal('number')
+        (classType.properties.get('str') as Property).type.typeAsString.should.equal('string');
+        (classType.properties.get('num') as Property).type.typeAsString.should.equal('number');
         (classType.properties.get('bool') as Property).type.typeAsString.should.equal('boolean');
     });
 });
