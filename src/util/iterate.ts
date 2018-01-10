@@ -1,25 +1,22 @@
+import {undefinedToNull} from './utils';
+
 export class Iterate<T> implements IterableIterator<T> {
     static from<TNew> (iterator: Iterable<TNew>): Iterate<TNew> {
-        return new Iterate<TNew>(iterator[Symbol.iterator]());
+        return new Iterate<TNew>(iterator);
     }
 
     static range (_from: number, _to?: number): Iterate<number> {
-        function* rangeGenerator (from: number, to: number): Iterator<number> {
-            for (let i = from; i < to; i++)
-                yield i;
-        }
-
-        return new Iterate<number>(rangeGenerator(_to ? _from : 0, _to || _from));
+        return new Iterate<number>(RangeIterator(_to ? _from : 0, _to || _from));
     }
 
-    static object<TNew> (object: { [key: string]: TNew }): ObjectIterate<TNew> {
-        return new ObjectIterate<TNew>(object);
+    static object<TNew> (object: { [key: string]: TNew }): Iterate<[string, TNew]> {
+        return new Iterate<[string, TNew]>(ObjectIterate<TNew>(object));
     }
 
-    private thisiterator: Iterator<T>;
+    private iterator: Iterator<T>;
 
-    constructor (thisiterator?: Iterator<T>) {
-        this.thisiterator = thisiterator || this;
+    constructor (private iterable: Iterable<T>) {
+        this.iterator = this.iterable[Symbol.iterator]();
     }
 
     [Symbol.iterator] (): IterableIterator<T> {
@@ -27,100 +24,64 @@ export class Iterate<T> implements IterableIterator<T> {
     }
 
     next (value?: any): IteratorResult<T> {
-        return this.thisiterator.next(value);
+        return this.iterator.next(value);
     }
 
     map<TTo> (map: (value: T) => TTo | null): Iterate<TTo> {
-        return new IteratorMap<T, TTo>(this.thisiterator, map);
+        return new Iterate<TTo>(IteratorMap<T, TTo>(this.iterable, map));
     }
 
-    combine$<B> (iterator: Iterable<B>): CombinedIterator$<T, B> {
-        return new CombinedIterator$<T, B>(this.thisiterator, iterator[Symbol.iterator]());
+    combine$<B> (iterator: Iterable<B>): Iterate<[T, B]> {
+        return new Iterate<[T, B]>(CombinedIterator$<T, B>(this.iterator, iterator[Symbol.iterator]()));
     }
 
-    combine<B> (iterator: Iterable<B>): CombinedIterator<T, B> {
-        return new CombinedIterator<T, B>(this.thisiterator, iterator[Symbol.iterator]());
+    combine<B> (iterator: Iterable<B>): Iterate<[T | null, B | null]> {
+        return new Iterate<[T | null, B | null]>(CombinedIterator<T, B>(this.iterator, iterator[Symbol.iterator]()));
     }
 
     forEach (callbackfn: (value: T) => void) {
-        for (const value of this)
+        for (const value of this.iterable)
             callbackfn(value);
 
     }
 }
 
-export class IteratorMap<TFrom, TTo> extends Iterate<TTo> {
-    constructor (private iterator: Iterator<TFrom>, private mapfn: (value: TFrom) => TTo | null) {
-        super();
-    }
-
-    next (): IteratorResult<TTo> {
-        while (true) {
-            const next = this.iterator.next();
-            if (next.done)
-                return {done: true} as IteratorResult<TTo>;
-            const value = this.mapfn(next.value);
-            if (value != null)
-                return {
-                    done: next.done,
-                    value: value,
-                };
-        }
+function* IteratorMap<TFrom, TTo> (iterator: Iterable<TFrom>, mapfn: (value: TFrom) => TTo | null): IterableIterator<TTo> {
+    for (const x of iterator) {
+        const y = mapfn(x);
+        if (y != null)
+            yield y;
     }
 }
 
-export class CombinedIterator$<A, B> extends Iterate<[A, B]> {
-    constructor (private a: Iterator<A>, private b: Iterator<B>) {
-        super();
-    }
-
-    next (): IteratorResult<[A, B]> {
-        const nextA = this.a.next();
-        const nextB = this.b.next();
+function* CombinedIterator$<A, B> (a: Iterator<A>, b: Iterator<B>): IterableIterator<[A, B]> {
+    while (true) {
+        const nextA = a.next();
+        const nextB = b.next();
         if (nextA.done || nextB.done)
-            return {done: true} as IteratorResult<[A, B]>;
-        return {
-            done: false,
-            value: [nextA.value, nextB.value],
-        };
+            return;
+        yield [nextA.value, nextB.value];
     }
 }
 
-export class CombinedIterator<A, B> extends Iterate<[A | null, B | null]> {
-    constructor (private a: Iterator<A>, private b: Iterator<B>) {
-        super();
-    }
-
-    next (): IteratorResult<[A | null, B | null]> {
-        const nextA = this.a.next();
-        const nextB = this.b.next();
+function* CombinedIterator<A, B> (a: Iterator<A>, b: Iterator<B>): IterableIterator<[A | null, B | null]> {
+    while (true) {
+        const nextA = a.next();
+        const nextB = b.next();
         if (nextA.done && nextB.done)
-            return {done: true} as IteratorResult<[A, B]>;
-        return {
-            done: false,
-            value: [nextA.value == null ? null : nextA.value,
-                nextB.value == null ? null : nextB.value],
-        };
+            return;
+        yield [undefinedToNull(nextA.value), undefinedToNull(nextB.value)];
     }
 }
 
-export class ObjectIterate<T> extends Iterate<[string, T]> {
-    private keyIterator: Iterator<string>;
+function* RangeIterator (from: number, to: number): IterableIterator<number> {
+    for (let i = from; i < to; i++)
+        yield i;
+}
 
-    constructor (private object: { [key: string]: T }) {
-        super();
-        this.keyIterator = Object.keys(object)[Symbol.iterator]();
-    }
-
-    next (): IteratorResult<[string, T]> {
-        const key = this.keyIterator.next();
-        if (key.done === true)
-            return {done: true} as IteratorResult<[string, T]>;
-        if (!this.object.hasOwnProperty(key.value))
-            return this.next();
-        return {
-            done: false,
-            value: [key.value, this.object[key.value]],
-        };
+function* ObjectIterate<T> (object: { [key: string]: T }): IterableIterator<[string, T]> {
+    for (const key of Object.keys(object)) {
+        if (object.hasOwnProperty(key))
+            yield [key, object[key]];
     }
 }

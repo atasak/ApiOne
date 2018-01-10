@@ -21,3 +21,8 @@ export async function timeOut (time: number, callbackfn: () => void) {
         resolve();
     }, time));
 }
+
+export function undefinedToNull<T> (x: T | undefined): T | null {
+    return x === undefined ? null : x;
+}
+
