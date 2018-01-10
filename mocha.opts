@@ -5,5 +5,4 @@
 --require sinon-chai
 --ui bdd
 --recursive
---reporter dot
 src/**/*.spec.ts
