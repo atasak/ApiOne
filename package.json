@@ -21,7 +21,7 @@
     "build:travis": "tsc",
     "run": "node dist/compiler/runner.js",
     "test": "nyc mocha --opts mocha.opts",
-    "check:coverage": "nyc check-coverage --lines 50 --functions 50 --branches 50",
+    "check:coverage": "nyc check-coverage --lines 50 --functions 50 --branches 50 --statements 50",
     "test:coverage": "npm run test; npm run report:coverage; npm run check:coverage",
     "report:coverage": "nyc report",
     "doc": "typedoc --out doc src --exclude src/runtime/lib.bak/**/*"
