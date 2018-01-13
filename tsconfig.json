@@ -8,6 +8,9 @@
     ],
     "types": [
       "mocha",
+      "chai",
+      "sinon",
+      "sinon-chai",
       "node"
     ],
     "lib": [

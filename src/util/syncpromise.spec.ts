@@ -2,6 +2,8 @@ import {SinonSpy, spy as Spy} from 'sinon';
 import {SyncPromise} from './syncpromise';
 import {stub} from './utils.dev';
 
+// tslint:disable:no-unused-expression
+
 describe('Synchronous promises', () => {
     let spy1: SinonSpy;
     let spy2: SinonSpy;

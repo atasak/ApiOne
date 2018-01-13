@@ -1,6 +1,6 @@
+import {PrimitiveType} from '../../typesystem/types';
 import {ResolvingId} from '../../../util/id';
 import {OneMap} from '../../../util/onemap';
-import {PrimitiveType} from '../../typesystem/types';
 import {IContentManager} from '../contentmanager';
 import {Primitive} from '../package';
 

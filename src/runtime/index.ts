@@ -1,2 +1,2 @@
-export * from './syncsystem'
-export * from './typesystem'
+export * from './syncsystem';
+export * from './typesystem';
