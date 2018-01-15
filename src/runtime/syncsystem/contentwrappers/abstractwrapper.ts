@@ -33,11 +33,11 @@ export abstract class ResolvableWrapper<T extends { [key: string]: any } | Primi
         return this.getHanlderOf(field)._status;
     }
 
-    protected $get<F> (field: string): Promise<F> {
+    protected get$<F> (field: string): Promise<F> {
         return this.getHanlderOf(field).promise as any as Promise<F>;
     }
 
-    protected _get<F> (field: string): F {
+    protected get_<F> (field: string): F {
         return this.getHanlderOf(field).getHandler('_') as any as F;
     }
 
@@ -47,7 +47,7 @@ export abstract class ResolvableWrapper<T extends { [key: string]: any } | Primi
         if ((model as { [key: string]: any })[ResolvableWrapper.IsWrapper])
             this.model[field] = (model as any as ResolvableWrapper<any>).id;
         this.manager.transformData(this.getTypeOf(field), model);
-        return this._get<F>(field);
+        return this.get_<F>(field);
     }
 
     protected abstract modelFactory (): any;
@@ -84,13 +84,13 @@ export abstract class ProxyWrapper<T> extends ResolvableWrapper<T> {
 
     createHandlers () {
         const _handler: ProxyHandler<ProxyWrapper<T>> = {
-            get: (target, name) => target._get(name as string),
+            get: (target, name) => target.get_(name as string),
             set: (target, name, value) => target.set(name as string, value),
         };
         this.handlers._ = new Proxy<ProxyWrapper<T>>(this, _handler);
 
         const $handler: ProxyHandler<ProxyWrapper<T>> = {
-            get: (target, name) => target.$get(name as string),
+            get: (target, name) => target.get$(name as string),
             set: (target, name, value) => target.set(name as string, value),
         };
         this.handlers.$ = new Proxy<ProxyWrapper<T>>(this, $handler);

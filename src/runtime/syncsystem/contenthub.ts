@@ -1,7 +1,7 @@
 import {stub} from '../../util/utils.dev';
 import {TContentManager} from './contentmanager';
-import {SystemSpecs} from './interfaces';
 import {IHubConnection, IHubNode} from './interfaces/hubconnection';
+import {SystemSpecs} from './interfaces/index';
 import {Package} from './package';
 import {PackageCollector, PackageType} from './packagecollector';
 
