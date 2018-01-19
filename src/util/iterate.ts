@@ -1,22 +1,22 @@
 import {undefinedToNull} from './utils';
 
 export class Iterate<T> implements IterableIterator<T> {
-    static from<TNew> (iterator: Iterable<TNew>): Iterate<TNew> {
-        return new Iterate<TNew>(iterator);
-    }
-
-    static range (_from: number, _to?: number): Iterate<number> {
-        return new Iterate<number>(RangeIterator(_to ? _from : 0, _to || _from));
-    }
-
-    static object<TNew> (object: { [key: string]: TNew }): Iterate<[string, TNew]> {
-        return new Iterate<[string, TNew]>(ObjectIterate<TNew>(object));
-    }
-
     private iterator: Iterator<T>;
 
     constructor (private iterable: Iterable<T>) {
         this.iterator = this.iterable[Symbol.iterator]();
+    }
+
+    static from<TNew> (iterator: Iterable<TNew>): Iterate<TNew> {
+        return new Iterate<TNew>(iterator);
+    }
+
+    static range (from: number, length?: number): Iterate<number> {
+        return new Iterate<number>(RangeIterator(length ? from : 0, length || from));
+    }
+
+    static object<TNew> (object: { [key: string]: TNew }): Iterate<[string, TNew]> {
+        return new Iterate<[string, TNew]>(ObjectIterate<TNew>(object));
     }
 
     [Symbol.iterator] (): IterableIterator<T> {
@@ -37,6 +37,14 @@ export class Iterate<T> implements IterableIterator<T> {
 
     combine<B> (iterator: Iterable<B>): Iterate<[T | null, B | null]> {
         return new Iterate<[T | null, B | null]>(CombinedIterator<T, B>(this.iterator, iterator[Symbol.iterator]()));
+    }
+
+    concat (iterator: Iterable<T>): Iterate<T> {
+        return new Iterate<T>(Concat(this.iterable, iterator));
+    }
+
+    limit (from: number, length: number): Iterate<T> {
+        return new Iterate<T>(LimitIterator(this.iterator, from, length));
     }
 
     forEach (callbackfn: (value: T) => void) {
@@ -74,9 +82,26 @@ function* CombinedIterator<A, B> (a: Iterator<A>, b: Iterator<B>): IterableItera
     }
 }
 
+function* Concat<T> (a: Iterable<T>, b: Iterable<T>): IterableIterator<T> {
+    for (const x of a)
+        yield x;
+    for (const x of b)
+        yield x;
+}
+
 function* RangeIterator (from: number, to: number): IterableIterator<number> {
     for (let i = from; i < to; i++)
         yield i;
+}
+
+function* LimitIterator<T> (iterator: Iterator<T>, from: number, length: number): IterableIterator<T> {
+    for (let i = 0; true; i++) {
+        const next = iterator.next();
+        if (next.done)
+            return;
+        if (from <= i && i < from + length)
+            yield next.value;
+    }
 }
 
 function* ObjectIterate<T> (object: { [key: string]: T }): IterableIterator<[string, T]> {
