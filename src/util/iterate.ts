@@ -1,12 +1,6 @@
 import {undefinedToNull} from './utils';
 
 export class Iterate<T> implements IterableIterator<T> {
-    private iterator: Iterator<T>;
-
-    constructor (private iterable: Iterable<T>) {
-        this.iterator = this.iterable[Symbol.iterator]();
-    }
-
     static from<TNew> (iterator: Iterable<TNew>): Iterate<TNew> {
         return new Iterate<TNew>(iterator);
     }
@@ -17,6 +11,16 @@ export class Iterate<T> implements IterableIterator<T> {
 
     static object<TNew> (object: { [key: string]: TNew }): Iterate<[string, TNew]> {
         return new Iterate<[string, TNew]>(ObjectIterate<TNew>(object));
+    }
+
+    private iterator: Iterator<T>;
+
+    constructor (private iterable: Iterable<T>) {
+        this.iterator = this.iterable[Symbol.iterator]();
+    }
+
+    get notNull (): Iterate<T> {
+        return this.filter((x: T) => x != null);
     }
 
     [Symbol.iterator] (): IterableIterator<T> {
@@ -31,12 +35,16 @@ export class Iterate<T> implements IterableIterator<T> {
         return new Iterate<TTo>(IteratorMap<T, TTo>(this.iterable, map));
     }
 
-    combine$<B> (iterator: Iterable<B>): Iterate<[T, B]> {
-        return new Iterate<[T, B]>(CombinedIterator$<T, B>(this.iterator, iterator[Symbol.iterator]()));
+    filter (filter: (value: T) => boolean): Iterate<T> {
+        return new Iterate<T>(IteratorFilter<T>(this.iterable, filter));
     }
 
-    combine<B> (iterator: Iterable<B>): Iterate<[T | null, B | null]> {
-        return new Iterate<[T | null, B | null]>(CombinedIterator<T, B>(this.iterator, iterator[Symbol.iterator]()));
+    zip$<B> (iterator: Iterable<B>): Iterate<[T, B]> {
+        return new Iterate<[T, B]>(ZippedIterator$<T, B>(this.iterator, iterator[Symbol.iterator]()));
+    }
+
+    zip<B> (iterator: Iterable<B>): Iterate<[T | null, B | null]> {
+        return new Iterate<[T | null, B | null]>(ZippedIterator<T, B>(this.iterator, iterator[Symbol.iterator]()));
     }
 
     concat (iterator: Iterable<T>): Iterate<T> {
@@ -50,7 +58,6 @@ export class Iterate<T> implements IterableIterator<T> {
     forEach (callbackfn: (value: T) => void) {
         for (const value of this.iterable)
             callbackfn(value);
-
     }
 }
 
@@ -62,7 +69,14 @@ function* IteratorMap<TFrom, TTo> (iterator: Iterable<TFrom>, mapfn: (value: TFr
     }
 }
 
-function* CombinedIterator$<A, B> (a: Iterator<A>, b: Iterator<B>): IterableIterator<[A, B]> {
+function* IteratorFilter<T> (iterator: Iterable<T>, filterfn: (value: T) => boolean): IterableIterator<T> {
+    for (const x of iterator) {
+        if (filterfn(x))
+            yield x;
+    }
+}
+
+function* ZippedIterator$<A, B> (a: Iterator<A>, b: Iterator<B>): IterableIterator<[A, B]> {
     while (true) {
         const nextA = a.next();
         const nextB = b.next();
@@ -72,7 +86,7 @@ function* CombinedIterator$<A, B> (a: Iterator<A>, b: Iterator<B>): IterableIter
     }
 }
 
-function* CombinedIterator<A, B> (a: Iterator<A>, b: Iterator<B>): IterableIterator<[A | null, B | null]> {
+function* ZippedIterator<A, B> (a: Iterator<A>, b: Iterator<B>): IterableIterator<[A | null, B | null]> {
     while (true) {
         const nextA = a.next();
         const nextB = b.next();

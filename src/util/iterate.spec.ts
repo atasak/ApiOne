@@ -24,16 +24,16 @@ describe('Iterator mapping and combining', () => {
         spy.thirdCall.should.have.been.calledWith(8);
     });
 
-    it('should combine the array iterators without nulls', () => {
-        for (const [i, j] of Iterate.from(array1).combine$(array2))
+    it('should zip the array iterators without nulls', () => {
+        for (const [i, j] of Iterate.from(array1).zip$(array2))
             spy(i, j);
         spy.firstCall.should.have.been.calledWith(3, 3);
         spy.secondCall.should.have.been.calledWith(6, 7);
         spy.callCount.should.have.been.equal(2);
     });
 
-    it('should combine the array iterators with nulls', () => {
-        for (const [i, j] of Iterate.from(array1).combine(array2))
+    it('should zip the array iterators with nulls', () => {
+        for (const [i, j] of Iterate.from(array1).zip(array2))
             spy(i, j);
         spy.firstCall.should.have.been.calledWith(3, 3);
         spy.secondCall.should.have.been.calledWith(6, 7);
