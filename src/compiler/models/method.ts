@@ -7,9 +7,9 @@ import {Type} from './type';
 import {getTypeInfo} from './typeutils';
 
 export class Method extends ClassElement {
-    name: string;
+    name!: string;
     parameters: Parameter[] = [];
-    returnType: Type;
+    returnType!: Type;
 
     constructor (protected schemer: Schemer, methodNode: MethodDeclaration | ConstructorDeclaration) {
         super();
@@ -43,8 +43,8 @@ export class Method extends ClassElement {
 }
 
 export class Parameter {
-    name: string;
-    type: Type;
+    name!: string;
+    type!: Type;
 
     constructor (private schemer: Schemer, parameterNode: ParameterDeclaration) {
         this.getNameAndType(parameterNode);

@@ -7,10 +7,10 @@ import {Property} from './property';
 import {Type} from './type';
 
 export class Class extends Type implements Printable {
-    classNode: ClassDeclaration;
-    name: string;
+    classNode!: ClassDeclaration;
+    name!: string;
     properties: Map<string, Property | Method> = new Map<string, Property | Method>();
-    constructr: Method;
+    constructr!: Method;
     readonly valueManagerName = 'ClassWrapper';
 
     private constructor (private schemer: Schemer, private fullName: string) {

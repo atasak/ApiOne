@@ -16,8 +16,8 @@ export class ApiOneCompiler {
     };
 
     config: ApiOneConfig;
-    schemer: Schemer;
-    classMap: Map<string, Type>;
+    schemer!: Schemer;
+    classMap!: Map<string, Type>;
 
     /**
      * Constructor
@@ -69,7 +69,7 @@ export class ApiOneCompiler {
     }
 }
 
-export class ApiOneConfig {
+export interface ApiOneConfig {
     tsConfigFilePath: string;
     sourcePath: string;
     rootType: string;

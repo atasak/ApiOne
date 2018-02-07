@@ -135,11 +135,9 @@ predict follow-up requests, and already send this data.
       all `xn` are rules like rules 3-5. 
   7.  `r[x | f]`: filter rules `x` with condition `y`, where `x` is a rule like
       rules `3-6` and `f` is a filter. 
-- Filters: `r * p`, where:  
-  - `r` is a follow rule, or `$r` where `r` are rule parts and `$` denotes the 
-    object the filter is applied on, 
-  - `*` is the expression operation: `<`, `<=`, `=`, `>=`, `>`, `!=`
-  - `p` is a primitive or a follow rule with the added `$` option. 
+- Filters: `x` where `x` is a string id for a lambda expression `$ => Boolean`, 
+  where $ is object the filter is applied on. Because sources are shared, the 
+  lambda expressions are available on all nodes in the network. 
 
 ### Content hub | Package collector
 The primary goal of the [content hub](../src/runtime/syncsystem/contenthub.ts) 
@@ -185,7 +183,7 @@ and managing:
   the hub and the models (via the data transformer)
   
 ### Content wrapper
-A [content wrapper](../src/runtime/syncsystem/contentwrappers/wrappers.ts)
+A [content wrapper](../src/runtime/syncsystem/contentwrappers/wrapper.types.ts)
 handles the data model. It provides: 
 
 - A handler object, containing the traps. For lists / dictionaries this will 

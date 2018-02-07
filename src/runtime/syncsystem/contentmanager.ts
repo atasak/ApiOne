@@ -4,7 +4,7 @@ import {OneMap} from '../../util/onemap';
 import {TContentHub} from './contenthub';
 import {TContentPort} from './contentport';
 import {ContentTransformer} from './contenttransformer';
-import {ResolvableWrapper} from './contentwrappers/abstractwrapper';
+import {ResolvableWrapper} from './contentwrappers/wrapper.abstract';
 import {ContentManager, ContentPort, FactoryMap, TypeReducer} from './interfaces';
 import {SystemSpecs} from './interfaces/systemspecs';
 import {DataObj, Primitive} from './package';
@@ -32,9 +32,9 @@ export interface IContentManager {
 }
 
 export class TContentManager<TEntry> implements IContentManager, ContentManager<TEntry> {
-    private data: OneMap<string, OneMap<string, any>>;
-    private wrappers: OneMap<string, OneMap<string, ResolvableWrapper<any>>>;
-    private promises: OneMap<string, SyncPromiseMap<string, ResolvableWrapper<any>>>;
+    private data!: OneMap<string, OneMap<string, any>>;
+    private wrappers!: OneMap<string, OneMap<string, ResolvableWrapper<any>>>;
+    private promises!: OneMap<string, SyncPromiseMap<string, ResolvableWrapper<any>>>;
 
     private dataFactories: FactoryMap;
     private typeReducer: TypeReducer;
@@ -43,8 +43,7 @@ export class TContentManager<TEntry> implements IContentManager, ContentManager<
 
     constructor (private hub: TContentHub<TEntry>, private _entry: TEntry,
                  specs: SystemSpecs) {
-        this.createWrapperOneMap();
-        this.createDataAndPromiseMaps();
+        this.createMaps();
 
         this.dataFactories = specs.dataFactories;
         this.typeReducer = specs.typeReducer;
@@ -103,7 +102,7 @@ export class TContentManager<TEntry> implements IContentManager, ContentManager<
         this.hub.deleteKey(type, id, field);
     }
 
-    private createWrapperOneMap () {
+    private createMaps () {
         this.wrappers = new OneMap<string, OneMap<string, ResolvableWrapper<any>>>(type =>
             new OneMap<string, ResolvableWrapper<any>>(id => {
                 const factory = this.dataFactories.get(type);
@@ -112,9 +111,6 @@ export class TContentManager<TEntry> implements IContentManager, ContentManager<
                     throw new Error();
                 return factory(this, id);
             }));
-    }
-
-    private createDataAndPromiseMaps () {
         this.data = new OneMap<string, OneMap<string, any>>(() => new OneMap<string, any>(() => null));
         this.promises = new OneMap<string, SyncPromiseMap<string, any>>(() => new SyncPromiseMap<string, any>());
     }

@@ -8,9 +8,9 @@ import {Type} from './type';
 import {getTypeInfo} from './typeutils';
 
 export class Property extends ClassElement {
-    name: string;
-    defaultValue = '';
-    type: Type;
+    name!: string;
+    defaultValue: string|null=null;
+    type!: Type;
 
     constructor (protected schemer: Schemer, propertyNode: PropertyDeclaration) {
         super();

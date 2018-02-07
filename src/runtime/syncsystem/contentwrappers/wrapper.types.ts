@@ -1,7 +1,7 @@
 import {ResolvingId} from '../../../util';
 import {ReType} from '../../../util/types';
 import {IContentManager} from '../contentmanager';
-import {ProxyWrapper, ResolvableWrapper} from './abstractwrapper';
+import {ProxyWrapper, ResolvableWrapper} from './wrapper.abstract';
 
 export interface ClassHandler<T extends ClassHandler<T>> {
     _one_wrapper: ClassWrapper<T>
