@@ -11,8 +11,8 @@ interface EmitConfig {
 
 export class Schemer {
     structures: Map<string, Type> = new Map<string, Type>();
-    ast: Ast;
-    genDir: Directory;
+    ast!: Ast;
+    genDir!: Directory;
 
     constructor (public config: ApiOneConfig) {
     }

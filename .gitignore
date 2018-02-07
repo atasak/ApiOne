@@ -16,3 +16,6 @@ npm-debug.log
 /**/*.js
 /.nyc_output/
 /coverage/
+
+#gulp
+!gulpfile.js

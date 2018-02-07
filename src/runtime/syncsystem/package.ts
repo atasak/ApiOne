@@ -32,10 +32,10 @@ export type AdditiveMap = Map3<Primitive>
 export type SubstractiveMap = Map3<string>
 
 export class Package {
-    oneInterfaceVersion: string;
-    oneImplementationVersion: string;
-    appInterfaceVersion: string;
-    appImplementationVersion: string;
+    oneInterfaceVersion = '';
+    oneImplementationVersion = '';
+    appInterfaceVersion = '';
+    appImplementationVersion = '';
 
     trace: string[] = [];
     status: Status[] = [];
@@ -44,9 +44,9 @@ export class Package {
     requestIds = 0;
     requestedIds: string[] = [];
 
-    resolve: ResolveObj;
-    follow: FollowObj;
+    resolve: ResolveObj = {};
+    follow: FollowObj = {};
 
-    additive: AdditiveObj;
-    substractive: SubstractiveObj;
+    additive: AdditiveObj = {};
+    substractive: SubstractiveObj = {};
 }

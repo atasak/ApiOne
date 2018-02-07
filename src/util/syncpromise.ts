@@ -1,26 +1,23 @@
+import {Reject, ResolvableCode, Resolve} from './promise.utils';
 import {noop} from './utils';
 
-export type Resolve<T, R> = (value: T) => (PromiseLike<R> | R);
-export type Reject<R> = (reason?: any) => (PromiseLike<R> | R);
-
-export type ResolvableCode<T, R1, R2> = (resolve: Resolve<T, R1>, reject: Reject<R2>) => void;
 
 enum PromiseState {Pending, Resolved, Rejected};
 
 export class SyncPromise<T> implements Promise<T> {
-    static resolve<T> (t: T): Promise<T> {
-        return new SyncPromise<T>(resolve => resolve(t));
-    }
-
     [Symbol.toStringTag]: any;
     private resolvers: Resolve<T, any>[] = [];
     private rejectors: Reject<any>[] = [];
     private state: PromiseState = PromiseState.Pending;
-    private resolveValue: T;
-    private rejectReason: any;
+    private resolveValue: T | null = null;
+    private rejectReason: any = null;
 
     constructor (code: ResolvableCode<T, any, any>) {
         code(t => this.resolve(t), r => this.reject(r));
+    }
+
+    static resolve<T> (t: T): Promise<T> {
+        return new SyncPromise<T>(resolve => resolve(t));
     }
 
     then<R1, R2> (onfulfilled?: Resolve<T, R1>, onrejected?: Reject<R2>): Promise<R1 | R2> {
@@ -32,7 +29,7 @@ export class SyncPromise<T> implements Promise<T> {
         if (this.state === PromiseState.Pending)
             return this.getResolvePromise<R1 | R2>(onfulfilled);
         else if (this.state === PromiseState.Resolved)
-            return this.afterResponse<R1>(onfulfilled(this.resolveValue));
+            return this.afterResponse<R1>(onfulfilled(this.resolveValue as T));
         else
             return catchPromise;
     }

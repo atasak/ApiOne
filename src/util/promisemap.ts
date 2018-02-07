@@ -1,7 +1,8 @@
 import {Iterate} from './iterate';
 import {OneMap} from './onemap';
 import {Printable} from './printable';
-import {ResolvableCode, SyncPromise} from './syncpromise';
+import {PromiseWrapper, ResolvableCode} from './promise.utils';
+import {SyncPromise} from './syncpromise';
 
 export abstract class AbstractPromiseMap<K, V> implements Map<K, V> {
     [Symbol.iterator] = this.entries;
@@ -124,18 +125,3 @@ export class SyncPromiseMap<K, V> extends AbstractPromiseMap<K, V> {
     }
 }
 
-class PromiseWrapper<T> {
-    promise: Promise<T>;
-    resolve: (value: T) => void;
-    reject: (reason: any) => void;
-    value: T | null = null;
-
-    constructor (promiseFactory: (callbackfn: ResolvableCode<T, void, void>) => Promise<T>) {
-        this.promise = promiseFactory((resolve, reject) => {
-            this.resolve = resolve;
-            this.reject = reject;
-        });
-        this.promise.then((val) =>
-            this.value = val);
-    }
-}

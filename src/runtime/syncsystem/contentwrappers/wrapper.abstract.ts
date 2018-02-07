@@ -3,8 +3,13 @@ import {OneMap} from '../../../util/onemap';
 import {PrimitiveType} from '../../typesystem/types';
 import {IContentManager} from '../contentmanager';
 import {Primitive} from '../package';
+import {AsyncPrimitive} from './async.primitives';
 
 export enum Resolved {Unresolved, Pending, Resolved};
+
+export abstract class DataWrapper<K extends string|number, T extends {[key:K]:ResolvingId|AsyncPrimitive}>{
+
+}
 
 export abstract class ResolvableWrapper<T extends { [key: string]: any } | Primitive> {
     public static IsWrapper = Symbol();
@@ -72,7 +77,7 @@ interface IHandler<T> {
 export abstract class ProxyWrapper<T> extends ResolvableWrapper<T> {
     private reducedType: string;
     private reducedTypeMap: OneMap<string, ResolvableWrapper<T>>;
-    private handlers: IHandler<T>;
+    private handlers!: IHandler<T>;
 
     constructor (manager: IContentManager, type: string, id: ResolvingId) {
         super(manager, type, id);
@@ -87,13 +92,16 @@ export abstract class ProxyWrapper<T> extends ResolvableWrapper<T> {
             get: (target, name) => target.get_(name as string),
             set: (target, name, value) => target.set(name as string, value),
         };
-        this.handlers._ = new Proxy<ProxyWrapper<T>>(this, _handler);
 
         const $handler: ProxyHandler<ProxyWrapper<T>> = {
             get: (target, name) => target.get$(name as string),
             set: (target, name, value) => target.set(name as string, value),
         };
-        this.handlers.$ = new Proxy<ProxyWrapper<T>>(this, $handler);
+
+        this.handlers = {
+            _: new Proxy<ProxyWrapper<T>>(this, _handler),
+            $: new Proxy<ProxyWrapper<T>>(this, $handler),
+        };
     }
 
     getHandler (method: '_' | '$'): T {

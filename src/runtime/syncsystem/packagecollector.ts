@@ -1,6 +1,17 @@
 import {doAsync, flatten, ID, Iterate, mapToObj, OneMap, ResolvingId} from '../../util';
 import {
-    AdditiveMap, DataObj, FollowMap, Map1, Map2, Map3, Obj1, Obj2, Obj3, Package, Primitive, ResolveMap,
+    AdditiveMap,
+    DataObj,
+    FollowMap,
+    Map1,
+    Map2,
+    Map3,
+    Obj1,
+    Obj2,
+    Obj3,
+    Package,
+    Primitive,
+    ResolveMap,
     SubstractiveMap,
 } from './package';
 
@@ -16,7 +27,7 @@ export class PackageCollector {
     private resolvePackage = new CollectingPackage();
     private broadcastPackage = new CollectingPackage();
     private channels = new OneMap<string, CollectingPackage>(() => new CollectingPackage());
-    private timeout: Promise<void> | null;
+    private timeout: Promise<void> | null = null;
 
     constructor (private callback: (pack: Package, type: PackageType, receiver?: string) => void) {
     }
