@@ -1,28 +1,31 @@
 import {SinonSpy, spy as Spy} from 'sinon';
 import {Iterate, ResolvingId} from '../../util';
-import {Package} from './package';
+import {DataObj, Package} from './package';
 import {PackageCollector} from './packagecollector';
+
+// tslint:disable:no-unused-expression
 
 describe('The packagecollector', () => {
     let spy: SinonSpy;
     let packageCollector: PackageCollector;
     let id: ResolvingId;
     let ids: ResolvingId[] = [];
-    let obj: Object;
+    let obj: DataObj;
     const foo = 'foo';
     const bar = 'bar';
     const type = 'A';
 
-    async function checkAndPack (spy: SinonSpy, promise: Promise<void>): Promise<Package> {
-        spy.should.not.have.been.called;
+    async function checkAndPack (promiseSpy: SinonSpy, promise: Promise<void>): Promise<Package> {
+        promiseSpy.should.not.have.been.called;
         await promise;
-        spy.should.have.been.called;
-        return spy.firstCall.args[0];
+        promiseSpy.should.have.been.called;
+        return promiseSpy.firstCall.args[0];
     }
 
     beforeEach(() => {
         spy = Spy();
         packageCollector = new PackageCollector(spy);
+        ids = [];
         Iterate.range(3).forEach(i => {
             ids.push(new ResolvingId('0000000' + i.toString()));
         });

@@ -1,6 +1,8 @@
 import {SinonSpy, spy as Spy} from 'sinon';
 import {SyncPromiseMap} from './promisemap';
 
+// tslint:disable:no-unused-expression
+
 describe('The promisemap', () => {
     let spy: SinonSpy;
     let promiseMap: SyncPromiseMap<string, string>;
